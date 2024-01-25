@@ -1,33 +1,63 @@
 name: Publish to NPM
 
 on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version bump type'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+        required: true
+        default: 'patch'
   push:
     branches:
       - main
 
 jobs:
-  publish:
+  bump-version:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: 📨 Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: ".nvmrc"
-          registry-url: "https://registry.npmjs.org"
+      - name: ⚙️ Setup Node
+        id: node-setup
+        uses: ./.github/actions/setup-node
 
-      - name: Install packages
-        run: npm ci
+      - name: 🔺 Bump the package version
+        run: npm version ${{ inputs.version || 'patch' }} --no-git-tag-version
 
-      - name: Build package
+      - name: 📝 Commit & Push version bump
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -am "chore(version): bump to v$(jq '.version' package.json -r)"
+          git push --no-verify  
+
+  publish:
+    needs: [bump-version]
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📨 Checkout
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node
+        id: node-setup
+        uses: ./.github/actions/setup-node
+
+      - name: ⚒️ Build package
         run: npm run build
 
-      - name: Unit test
+      - name: 🧪️ Unit test
         run: npm run test:coverage
 
-      - name: Publish on npm
+      - name: ☁️ Publish on npm
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}

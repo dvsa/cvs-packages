@@ -1,0 +1,16 @@
+name: Setup Node
+
+description: Action to set up NodeJS
+
+runs:
+  using: composite
+  steps:
+    - name: ⚙️ Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: ".nvmrc"
+        registry-url: "https://registry.npmjs.org"
+
+    - name: ➕ Install dependencies
+      shell: bash
+      run: npm ci
