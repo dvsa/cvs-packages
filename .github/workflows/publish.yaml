@@ -52,6 +52,6 @@ jobs:
         run: npm run test:coverage
 
       - name: ☁️ Publish on npm
-        run: npm publish --dry-run
+        run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
