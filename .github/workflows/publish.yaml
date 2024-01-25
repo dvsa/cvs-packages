@@ -1,4 +1,4 @@
-name: Publish package
+name: Publish to NPM
 
 on:
   push:
@@ -7,9 +7,27 @@ on:
 
 jobs:
   publish:
-    uses: dvsa/des-workflow-actions/.github/workflows/publish-package.yaml@main
-    with:
-      WORKING_DIRECTORY: '.'
-      PACKAGE_NAME: '@dvsa/cvs-microservice-common'
-    secrets:
-      ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ".nvmrc"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install packages
+        run: npm ci
+
+      - name: Build package
+        run: npm run build
+
+      - name: Unit test
+        run: npm run test:coverage
+
+      - name: Publish on npm
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
