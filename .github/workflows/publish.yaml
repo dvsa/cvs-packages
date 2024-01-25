@@ -17,8 +17,7 @@ on:
       - main
 
 jobs:
-  bump-version:
-    if: ${{ github.event_name == 'workflow_dispatch' }}
+  publish:
     runs-on: ubuntu-latest
     steps:
       - name: 📨 Checkout
@@ -29,28 +28,22 @@ jobs:
         uses: ./.github/actions/setup-node
 
       - name: 🔺 Bump the package version
+        if: ${{ github.event_name == 'workflow_dispatch' }}
         run: npm version ${{ inputs.version || 'patch' }} --no-git-tag-version
 
+      - name: ➕ Install dependencies
+        shell: bash
+        run: npm ci
+
       - name: 📝 Commit & Push version bump
+        if: ${{ github.event_name == 'workflow_dispatch' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git commit -am "chore(version): bump to v$(jq '.version' package.json -r)"
-          git push --no-verify  
-
-  publish:
-    needs: [bump-version]
-    if: always()
-    runs-on: ubuntu-latest
-    steps:
-      - name: 📨 Checkout
-        uses: actions/checkout@v4
-
-      - name: ⚙️ Setup Node
-        id: node-setup
-        uses: ./.github/actions/setup-node
+          git push --no-verify    
 
       - name: ⚒️ Build package
         run: npm run build
