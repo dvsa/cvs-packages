@@ -42,6 +42,7 @@ jobs:
 
   publish:
     needs: [bump-version]
+    if: always()
     runs-on: ubuntu-latest
     steps:
       - name: 📨 Checkout
