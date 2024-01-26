@@ -4,20 +4,20 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 export class DateTime {
   private instance!: dayjs.Dayjs;
 
-  constructor(sourceDateTime?: DateTime | string | Date) {
+  constructor(sourceDateTime?: DateTime | string | Date, format: string | undefined = undefined) {
     dayjs.extend(customParseFormat);
 
     if (sourceDateTime === undefined || sourceDateTime === null) {
       this.instance = dayjs();
     } else if (typeof sourceDateTime === 'string' || sourceDateTime instanceof Date) {
-      this.instance = dayjs(sourceDateTime);
+      this.instance = dayjs(sourceDateTime, format);
     } else {
-      this.instance = dayjs(sourceDateTime.instance);
+      this.instance = dayjs(sourceDateTime.instance, format);
     }
   }
 
-  static at(sourceDateTime: DateTime | string | Date): DateTime {
-    return new DateTime(sourceDateTime);
+  static at(sourceDateTime: DateTime | string | Date, format: string | undefined = undefined): DateTime {
+    return new DateTime(sourceDateTime, format);
   }
 
   add(amount: number, unit: dayjs.ManipulateType): DateTime {
