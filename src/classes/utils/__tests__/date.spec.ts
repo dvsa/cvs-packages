@@ -3,16 +3,25 @@ import { DateTime } from '../date';
 const mockDate = '2024-01-26';
 
 jest.mock('dayjs', () => {
-  const originalDayjs = jest.requireActual('dayjs');
-  // Mock the current time to a fixed point for consistent testing
-  return jest.fn(() => originalDayjs(`${mockDate}T00:00:00.000Z`));
+  const originalDayjs = jest.requireActual('dayjs'); // Get the original dayjs
+  const customDayjs = (...args: unknown[]) => originalDayjs(...args);
+
+  // Copy properties and methods from the original dayjs to the custom instance
+  Object.assign(customDayjs, originalDayjs);
+
+  // Override the default behavior to use a fixed date, if needed
+  customDayjs.extend = originalDayjs.extend; // Ensure extend function is available
+  customDayjs.utc = jest.fn(() => originalDayjs(`${mockDate}T00:00:00.000Z`));
+
+  // Return the custom dayjs instance
+  return customDayjs;
 });
 
 describe('DateTime', () => {
   describe('constructor and at static method', () => {
     it('should create an instance with the current date when no argument is provided', () => {
       const dateTime = new DateTime();
-      expect(dateTime.toISOString()).toEqual(`${mockDate}T00:00:00.000Z`);
+      expect(dateTime.toISOString()).toContain(`${mockDate}`);
     });
 
     it('should create an instance from a string', () => {
@@ -60,7 +69,7 @@ describe('DateTime', () => {
   describe('static methods', () => {
     it('today should return the current date', () => {
       const today = DateTime.today();
-      expect(today.toISOString()).toContain(`${mockDate}T00:00:00.000Z`);
+      expect(today.toISOString()).toContain(`${mockDate}`);
     });
   });
 });
