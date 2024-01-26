@@ -1,6 +1,6 @@
 .DS_Store
 .idea/
-api/
+api
 classes/
 response/
 coverage/
