@@ -1,1 +1,4 @@
 .npmrc
+
+# Reason: "Contains word: secret"
+src/classes/aws/secrets-manager-client.ts

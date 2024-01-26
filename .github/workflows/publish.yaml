@@ -43,7 +43,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git commit -am "chore(version): bump to v$(jq '.version' package.json -r)"
-          git push --no-verify    
+          git push --no-verify
 
       - name: ⚒️ Build package
         run: npm run build
