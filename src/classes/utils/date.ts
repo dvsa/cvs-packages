@@ -1,9 +1,12 @@
 import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 export class DateTime {
   private instance!: dayjs.Dayjs;
 
   constructor(sourceDateTime?: DateTime | string | Date) {
+    dayjs.extend(customParseFormat);
+
     if (sourceDateTime === undefined || sourceDateTime === null) {
       this.instance = dayjs();
     } else if (typeof sourceDateTime === 'string' || sourceDateTime instanceof Date) {
