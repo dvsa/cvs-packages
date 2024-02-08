@@ -41,7 +41,7 @@ export class SimpleEmailService {
   }
 
   /**
-   * Send an email using AWS SES, using a pre-defined template
+   * Send an email using AWS SES using a pre-defined template
    * @param {SendPayload} payload - The parameters to send to the operation.
    * @param {Partial<SESClientConfig>} config - The SES configuration object.
    * @returns {Promise<SendEmailCommandOutput>}
@@ -50,7 +50,7 @@ export class SimpleEmailService {
     payload: SendPayload,
     config: Partial<SESClientConfig> = {},
   ): Promise<SendEmailCommandOutput> {
-    return SimpleEmailService.getClient(config).send(
+    return this.getClient(config).send(
       new SendEmailCommand({
         Source: payload.from,
         Destination: {

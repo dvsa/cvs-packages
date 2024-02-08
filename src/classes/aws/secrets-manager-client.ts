@@ -1,9 +1,9 @@
 import {
     GetSecretValueCommand,
-    GetSecretValueCommandInput,
     SecretsManagerClient,
+    GetSecretValueCommandInput,
+    SecretsManagerClientConfig,
 } from "@aws-sdk/client-secrets-manager";
-import { SecretsManagerClientConfig } from '@aws-sdk/client-secrets-manager/dist-types/SecretsManagerClient';
 import { fromIni } from '@aws-sdk/credential-providers';
 
 export class SecretsManager {
