@@ -35,12 +35,8 @@ export class S3Storage {
     params: GetObjectRequest,
     config: Partial<S3ClientConfig> = {},
   ): Promise<GetObjectCommandOutput> {
-    try {
-      return this.getClient(config).send(
-        new GetObjectCommand(params),
-      );
-    } catch (err) {
-      return Promise.reject(err);
-    }
+    return this.getClient(config).send(
+      new GetObjectCommand(params),
+    );
   }
 }

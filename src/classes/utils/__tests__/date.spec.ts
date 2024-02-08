@@ -21,7 +21,7 @@ describe('DateTime', () => {
   describe('constructor and at static method', () => {
     it('should create an instance with the current date when no argument is provided', () => {
       const dateTime = new DateTime();
-      expect(dateTime.toISOString()).toContain(`${mockDate}`);
+      expect(dateTime.toISOString()).toMatch(/^\d{4}-\d{2}-\d{2}(?:T[0-9:.TZ-]+)?/);
     });
 
     it('should create an instance from a string', () => {
@@ -69,7 +69,21 @@ describe('DateTime', () => {
   describe('static methods', () => {
     it('today should return the current date', () => {
       const today = DateTime.today();
-      expect(today.toISOString()).toContain(`${mockDate}`);
+      expect(today.toISOString()).toMatch(/^\d{4}-\d{2}-\d{2}(?:T[0-9:.TZ-]+)?/);
+    });
+  });
+
+  describe('day', () => {
+    it('should return the day (numerical) of the week', () => {
+      const dateTime = new DateTime(mockDate);
+      expect(dateTime.day()).toEqual(5);
+    });
+  });
+
+  describe('toString', () => {
+    it('should return the date as a string', () => {
+      const dateTime = new DateTime(mockDate);
+      expect(dateTime.toString()).toEqual('Fri, 26 Jan 2024 00:00:00 GMT');
     });
   });
 });

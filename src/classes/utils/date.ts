@@ -1,10 +1,12 @@
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 
+type AcceptableDate = DateTime | string | Date;
+
 export class DateTime {
   private instance!: dayjs.Dayjs;
 
-  constructor(sourceDateTime?: DateTime | string | Date, format: string | undefined = undefined) {
+  constructor(sourceDateTime?: AcceptableDate, format: string | undefined = undefined) {
     dayjs.extend(customParseFormat);
 
     if (sourceDateTime === undefined || sourceDateTime === null) {
@@ -16,7 +18,7 @@ export class DateTime {
     }
   }
 
-  static at(sourceDateTime: DateTime | string | Date, format: string | undefined = undefined): DateTime {
+  static at(sourceDateTime: AcceptableDate, format: string | undefined = undefined): DateTime {
     return new DateTime(sourceDateTime, format);
   }
 
@@ -46,28 +48,27 @@ export class DateTime {
     return this.instance.toISOString();
   }
 
-  isAfter(targetDate: DateTime | string | Date): boolean {
+  isAfter(targetDate: AcceptableDate): boolean {
     const date = new DateTime(targetDate);
-    console.log('isAfter date', date.toString());
     return this.instance.isAfter(date.instance);
   }
 
-  diff(targetDate: DateTime | string | Date, unit: dayjs.QUnitType, precise?: boolean): number {
+  diff(targetDate: AcceptableDate, unit: dayjs.QUnitType, precise?: boolean): number {
     const date = new DateTime(targetDate);
     return this.instance.diff(date.instance, unit, precise);
   }
 
-  daysDiff(targetDate: DateTime | string | Date): number {
+  daysDiff(targetDate: AcceptableDate): number {
     const date = new DateTime(targetDate);
     return this.instance.startOf('day').diff(date.instance.startOf('day'), 'day');
   }
 
-  compareDuration(targetDate: DateTime | string | Date, unit: dayjs.QUnitType): number {
+  compareDuration(targetDate: AcceptableDate, unit: dayjs.QUnitType): number {
     const date = new DateTime(targetDate);
     return date.instance.diff(this.instance, unit);
   }
 
-  isBefore(targetDate: DateTime | string | Date): boolean {
+  isBefore(targetDate: AcceptableDate): boolean {
     const date = new DateTime(targetDate);
     return this.instance.isBefore(date.instance);
   }
