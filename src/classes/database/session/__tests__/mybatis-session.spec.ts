@@ -49,6 +49,50 @@ describe('MyBatisSession', () => {
     expect(results).toEqual([]);
   });
 
+  test('select catch error and log the names space and mapper', async () => {
+    (MyBatis.getStatement as jest.Mock).mockImplementationOnce(() => {
+      throw new Error('Mock Error');
+    });
+
+    try {
+      await mockSession.select('testMapper', {});
+    } catch (err) {
+      expect(mockConnection.query).not.toHaveBeenCalled();
+      expect(err).toEqual({
+        error: new Error('Mock Error'),
+        message:
+          '[ERROR]: MyBatis.getStatement for namespace: testNamespace & mapperID: testMapper.',
+      });
+    }
+  });
+
+  test('select print the debug console.logs for query', async () => {
+    mockSession = new MyBatisSession(
+      mockConnection,
+      'testNamespace',
+      ['path/to/mapper'],
+      true
+    );
+
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+
+    const results = await mockSession.select('testMapper', {});
+    expect(MyBatis.getStatement).toHaveBeenCalledWith(
+      'testNamespace',
+      'testMapper',
+      {},
+      expect.anything()
+    );
+    expect(console.log).toHaveBeenCalledWith(
+      '*** Query for namespace: testNamespace & mapperID: testMapper ***'
+    );
+    expect(console.log).toHaveBeenCalledWith('Mock SQL Statement');
+    expect(console.log).toHaveBeenCalledWith('\n***');
+    expect(mockConnection.query).toHaveBeenCalledWith('Mock SQL Statement');
+    expect(results).toEqual([]);
+    consoleSpy.mockRestore();
+  });
+
   test('selectOne returns the first result of selectList', async () => {
     const mockResult = { id: 1, name: 'Test' };
     jest.spyOn(mockSession, 'selectList').mockResolvedValue([mockResult]);
@@ -91,6 +135,10 @@ describe('MyBatisSession', () => {
     );
     expect(results).toEqual([]);
     consoleSpy.mockRestore(); // Restore console.error after this test
+  });
+
+  test('should return the connection', async () => {
+    expect(mockSession.getConnection).toEqual(mockConnection);
   });
 
   test('end closes the MySQL connection', async () => {
