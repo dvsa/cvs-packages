@@ -1,4 +1,4 @@
-import { SecretsManagerClient } from "@aws-sdk/client-secrets-manager";
+import { SecretsManagerClient } from '@aws-sdk/client-secrets-manager';
 import { SecretsManager } from '../secrets-manager-client';
 
 jest.mock('@aws-sdk/credential-providers', () => ({
@@ -47,11 +47,15 @@ describe('SecretsManager', () => {
     });
 
     it('throws an error when the secret ID is invalid', async () => {
-      await expect(SecretsManager.get({ SecretId: 'invalidSecretId' })).rejects.toThrow('Secret not found');
+      await expect(
+        SecretsManager.get({ SecretId: 'invalidSecretId' })
+      ).rejects.toThrow('Secret not found');
     });
 
     it('throws an error when the secret string is empty', async () => {
-      await expect(SecretsManager.get({ SecretId: 'emptySecret' })).rejects.toThrow('Secret string \'emptySecret\' was empty.');
+      await expect(
+        SecretsManager.get({ SecretId: 'emptySecret' })
+      ).rejects.toThrow("Secret string 'emptySecret' was empty.");
     });
   });
 });

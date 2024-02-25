@@ -21,7 +21,9 @@ describe('DateTime', () => {
   describe('constructor and at static method', () => {
     it('should create an instance with the current date when no argument is provided', () => {
       const dateTime = new DateTime();
-      expect(dateTime.toISOString()).toMatch(/^\d{4}-\d{2}-\d{2}(?:T[0-9:.TZ-]+)?/);
+      expect(dateTime.toISOString()).toMatch(
+        /^\d{4}-\d{2}-\d{2}(?:T[0-9:.TZ-]+)?/
+      );
     });
 
     it('should create an instance from a string', () => {
@@ -69,7 +71,9 @@ describe('DateTime', () => {
   describe('static methods', () => {
     it('today should return the current date', () => {
       const today = DateTime.today();
-      expect(today.toISOString()).toMatch(/^\d{4}-\d{2}-\d{2}(?:T[0-9:.TZ-]+)?/);
+      expect(today.toISOString()).toMatch(
+        /^\d{4}-\d{2}-\d{2}(?:T[0-9:.TZ-]+)?/
+      );
     });
   });
 

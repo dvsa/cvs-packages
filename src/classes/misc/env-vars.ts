@@ -32,10 +32,12 @@ export class EnvironmentVariables {
    */
   static throwIfNotPresent<T>(
     value: string | null | undefined,
-    configKey: string,
+    configKey: string
   ): T {
     if (!value || value?.trim().length === 0) {
-      throw new Error(`Configuration item ${configKey} was not provided with a value`);
+      throw new Error(
+        `Configuration item ${configKey} was not provided with a value`
+      );
     }
     return value as T;
   }
