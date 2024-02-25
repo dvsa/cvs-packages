@@ -7,13 +7,17 @@ import {
 import { fromIni } from '@aws-sdk/credential-providers';
 
 export class SecretsManager {
+  private static readonly defaultConfig: Partial<SecretsManagerClientConfig> = {
+    region: 'eu-west-1',
+  };
+
   /**
    * Get a Secrets Manager client
    * @param {Partial<SecretsManagerClientConfig>} config - The Secrets Manager configuration object.
    * @returns {SecretsManagerClient}
    */
   static getClient(
-    config: Partial<SecretsManagerClientConfig> = {}
+    config: Partial<SecretsManagerClientConfig> = SecretsManager.defaultConfig
   ): SecretsManagerClient {
     if (process.env.USE_CREDENTIALS === 'true') {
       config.credentials = fromIni();
@@ -31,7 +35,7 @@ export class SecretsManager {
    */
   static async get<T>(
     params: GetSecretValueCommandInput,
-    config: Partial<SecretsManagerClientConfig> = {}
+    config: Partial<SecretsManagerClientConfig> = SecretsManager.defaultConfig
   ): Promise<T> {
     try {
       const secretValue = await this.getClient(config).send(
