@@ -8,12 +8,18 @@ import {
 import { fromIni } from '@aws-sdk/credential-providers';
 
 export class S3Storage {
+  private static readonly defaultConfig: Partial<S3ClientConfig> = {
+    region: 'eu-west-1',
+  };
+
   /**
    * Get an S3 client
    * @param {Partial<S3ClientConfig>} config - The S3 configuration object.
    * @return {S3Client}
    */
-  static getClient(config: Partial<S3ClientConfig> = {}): S3Client {
+  static getClient(
+    config: Partial<S3ClientConfig> = S3Storage.defaultConfig
+  ): S3Client {
     if (process.env.USE_CREDENTIALS === 'true') {
       config.credentials = fromIni();
     }
@@ -30,7 +36,7 @@ export class S3Storage {
    */
   static async download(
     params: GetObjectRequest,
-    config: Partial<S3ClientConfig> = {}
+    config: Partial<S3ClientConfig> = S3Storage.defaultConfig
   ): Promise<GetObjectCommandOutput> {
     return this.getClient(config).send(new GetObjectCommand(params));
   }
