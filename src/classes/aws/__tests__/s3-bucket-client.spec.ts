@@ -15,7 +15,10 @@ jest.mock('@aws-sdk/client-s3', () => {
     S3Client: jest.fn().mockImplementation(() => ({
       send: jest.fn().mockImplementation((command) => {
         // Define mock behavior based on command input
-        if (command.input.Bucket === 'validBucket' && command.input.Key === 'validKey') {
+        if (
+          command.input.Bucket === 'validBucket' &&
+          command.input.Key === 'validKey'
+        ) {
           return Promise.resolve({
             Body: 'mocked file content',
           });
@@ -30,13 +33,18 @@ jest.mock('@aws-sdk/client-s3', () => {
 describe('S3Storage', () => {
   describe('download', () => {
     it('successfully downloads an object from S3', async () => {
-      const response = await S3Storage.download({ Bucket: 'validBucket', Key: 'validKey' });
+      const response = await S3Storage.download({
+        Bucket: 'validBucket',
+        Key: 'validKey',
+      });
       expect(response).toEqual({ Body: 'mocked file content' });
     });
 
     it('throws an error when the object does not exist', async () => {
       const params = { Bucket: 'invalidBucket', Key: 'invalidKey' };
-      await expect(S3Storage.download(params)).rejects.toThrow('File not found');
+      await expect(S3Storage.download(params)).rejects.toThrow(
+        'File not found'
+      );
     });
 
     it('should use credentials from ini file when USE_CREDENTIALS is true', () => {

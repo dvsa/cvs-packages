@@ -23,16 +23,13 @@ export interface SendPayload {
 }
 
 export class SimpleEmailService {
-
   /**
    * Get an SES client
    * - If process.env.USE_CREDENTIALS is true, credentials will be used from ~/.aws/credentials
    * @param {Partial<SESClientConfig>} config - The SES configuration object.
    * @returns {SESClient}
    */
-  static getClient(
-    config: Partial<SESClientConfig> = {},
-  ): SESClient {
+  static getClient(config: Partial<SESClientConfig> = {}): SESClient {
     if (process.env.USE_CREDENTIALS === 'true') {
       config.credentials = fromIni();
     }
@@ -48,7 +45,7 @@ export class SimpleEmailService {
    */
   static async send(
     payload: SendPayload,
-    config: Partial<SESClientConfig> = {},
+    config: Partial<SESClientConfig> = {}
   ): Promise<SendEmailCommandOutput> {
     return this.getClient(config).send(
       new SendEmailCommand({
@@ -74,7 +71,7 @@ export class SimpleEmailService {
             },
           },
         },
-      }),
+      })
     );
   }
 }
