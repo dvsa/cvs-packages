@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 
-type AcceptableDate = DateTime | string | Date;
+type AcceptableDate = DateTime | string | Date | null;
 
 export class DateTime {
   private instance!: dayjs.Dayjs;
@@ -27,7 +27,10 @@ export class DateTime {
   static at(
     sourceDateTime: AcceptableDate,
     format: string | undefined = undefined
-  ): DateTime {
+  ): DateTime | null {
+    if (!sourceDateTime) {
+      return null;
+    }
     return new DateTime(sourceDateTime, format);
   }
 

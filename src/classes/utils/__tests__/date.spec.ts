@@ -45,7 +45,7 @@ describe('DateTime', () => {
 
     it('static at method should create a new DateTime instance', () => {
       const dateTime = DateTime.at(mockDate);
-      expect(dateTime.toISOString()).toContain(mockDate);
+      expect(dateTime?.toISOString()).toContain(mockDate);
     });
   });
 
