@@ -5,6 +5,7 @@ type AcceptableDate = DateTime | string | Date | null;
 
 export class DateTime {
   private instance!: dayjs.Dayjs;
+  private static readonly UKLocalDateTimeFormat = 'DD/MM/YYYY HH:mm:ss';
 
   constructor(
     sourceDateTime?: AcceptableDate,
@@ -32,6 +33,15 @@ export class DateTime {
       return null;
     }
     return new DateTime(sourceDateTime, format);
+  }
+
+  static StandardUkLocalDateTimeAdapter(
+    sourceDateTime: AcceptableDate
+  ): string | null {
+    return (
+      DateTime.at(sourceDateTime)?.format(DateTime.UKLocalDateTimeFormat) ||
+      null
+    );
   }
 
   add(amount: number, unit: dayjs.ManipulateType): DateTime {
