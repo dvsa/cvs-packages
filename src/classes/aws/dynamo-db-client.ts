@@ -37,12 +37,12 @@ export class DynamoDb {
   /**
    * Perform a full scan of a DynamoDB table
    * @template T
-   * @param {string} tableName
-   * @param {Partial<DynamoDBClientConfig>} clientConfig
+   * @param {ScanCommandInput} scanParams - TableName and ExclusiveStartKey are defined so any additional parameters can be passed here
+   * @param {Partial<DynamoDBClientConfig>} clientConfig - Defaults to the `eu-west-1` region
    * @return {Promise<T[]>}
    */
   static async fullScan<T>(
-    tableName: string,
+    scanParams: Partial<ScanCommandInput> = {},
     clientConfig: Partial<DynamoDBClientConfig> = DynamoDb.defaultConfig
   ): Promise<T[]> {
     const rows: T[] = [];
@@ -50,8 +50,8 @@ export class DynamoDb {
       undefined;
 
     const params = {
-      TableName: tableName,
       ExclusiveStartKey: lastEvaluatedKey,
+      ...scanParams,
     } as ScanCommandInput;
 
     do {

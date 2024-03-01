@@ -1,4 +1,8 @@
-import { DynamoDBClient, ScanCommand } from '@aws-sdk/client-dynamodb';
+import {
+  DynamoDBClient,
+  ScanCommand,
+  ScanCommandInput,
+} from '@aws-sdk/client-dynamodb';
 import { DynamoDb } from '../dynamo-db-client';
 
 // Mock the AWS SDK dependencies
@@ -56,6 +60,9 @@ describe('DynamoDb', () => {
 
   describe('fullScan', () => {
     const tableName = 'testTable';
+    const mockParams: Partial<ScanCommandInput> = {
+      TableName: tableName,
+    };
     let mockSend: jest.Mock;
 
     beforeEach(() => {
@@ -72,7 +79,7 @@ describe('DynamoDb', () => {
         LastEvaluatedKey: undefined, // Indicates that this is the last page of data
       });
 
-      const result = await DynamoDb.fullScan(tableName);
+      const result = await DynamoDb.fullScan(mockParams);
 
       expect(result).toEqual(items);
       expect(mockSend).toHaveBeenCalledWith(expect.any(ScanCommand));
@@ -93,7 +100,7 @@ describe('DynamoDb', () => {
           LastEvaluatedKey: undefined,
         });
 
-      const result = await DynamoDb.fullScan(tableName);
+      const result = await DynamoDb.fullScan(mockParams);
 
       expect(result).toEqual([...firstPageItems, ...secondPageItems]);
       expect(mockSend).toHaveBeenCalledTimes(2);
@@ -103,7 +110,7 @@ describe('DynamoDb', () => {
       const error = new Error('Scan failed');
       mockSend.mockRejectedValueOnce(error);
 
-      await expect(DynamoDb.fullScan(tableName)).rejects.toThrow(error);
+      await expect(DynamoDb.fullScan(mockParams)).rejects.toThrow(error);
     });
   });
 });
