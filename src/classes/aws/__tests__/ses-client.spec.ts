@@ -45,9 +45,7 @@ describe('SimpleEmailService', () => {
       sendMock.mockRejectedValueOnce(new Error('Failed to send email'));
 
       const invalidPayload = { ...validPayload, to: ['invalid@example.com'] };
-      await expect(SimpleEmailService.send(invalidPayload)).rejects.toThrow(
-        'Failed to send email'
-      );
+      await expect(SimpleEmailService.send(invalidPayload)).rejects.toThrow('Failed to send email');
     });
 
     it('should use credentials from ini file when USE_CREDENTIALS is true', () => {

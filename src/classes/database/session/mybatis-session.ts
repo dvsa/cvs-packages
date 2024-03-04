@@ -41,9 +41,7 @@ export class MyBatisSession {
     }
 
     if (this.debugMode) {
-      console.log(
-        `*** Query for namespace: ${this.namespace} & mapperID: ${mapperId} ***`
-      );
+      console.log(`*** Query for namespace: ${this.namespace} & mapperID: ${mapperId} ***`);
       console.log(query);
       console.log('\n***');
     }
@@ -78,11 +76,7 @@ export class MyBatisSession {
    * @param {ClassConstructor<T>} model - Model class
    * @return {Promise<T[]>}
    */
-  async selectList<T>(
-    mapperId: string,
-    params: Params,
-    model: ClassConstructor<T>
-  ): Promise<T[]> {
+  async selectList<T>(mapperId: string, params: Params, model: ClassConstructor<T>): Promise<T[]> {
     const rows = await this.select(mapperId, params);
     return rows.map((row) => plainToInstance(model, row));
   }

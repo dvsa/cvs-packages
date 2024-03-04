@@ -25,12 +25,7 @@ describe('MyBatisSession', () => {
 
   beforeEach(async () => {
     mockConnection = await MySQL.createConnection({});
-    mockSession = new MyBatisSession(
-      mockConnection,
-      'testNamespace',
-      ['path/to/mapper'],
-      false
-    );
+    mockSession = new MyBatisSession(mockConnection, 'testNamespace', ['path/to/mapper'], false);
   });
 
   afterEach(() => {
@@ -67,12 +62,7 @@ describe('MyBatisSession', () => {
   });
 
   test('select print the debug console.logs for query', async () => {
-    mockSession = new MyBatisSession(
-      mockConnection,
-      'testNamespace',
-      ['path/to/mapper'],
-      true
-    );
+    mockSession = new MyBatisSession(mockConnection, 'testNamespace', ['path/to/mapper'], true);
 
     const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 
@@ -98,11 +88,7 @@ describe('MyBatisSession', () => {
     jest.spyOn(mockSession, 'selectList').mockResolvedValue([mockResult]);
 
     const result = await mockSession.selectOne('testMapper', {}, class {});
-    expect(mockSession.selectList).toHaveBeenCalledWith(
-      'testMapper',
-      {},
-      expect.any(Function)
-    );
+    expect(mockSession.selectList).toHaveBeenCalledWith('testMapper', {}, expect.any(Function));
     expect(result).toEqual(mockResult);
   });
 
@@ -117,18 +103,10 @@ describe('MyBatisSession', () => {
   });
 
   test('selectAndCatchSilently catches errors and logs them', async () => {
-    const consoleSpy = jest
-      .spyOn(console, 'error')
-      .mockImplementation(() => {});
-    jest
-      .spyOn(mockSession, 'selectList')
-      .mockRejectedValue(new Error('Test Error'));
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest.spyOn(mockSession, 'selectList').mockRejectedValue(new Error('Test Error'));
 
-    const results = await mockSession.selectAndCatchSilently(
-      'testMapper',
-      {},
-      class {}
-    );
+    const results = await mockSession.selectAndCatchSilently('testMapper', {}, class {});
     expect(console.error).toHaveBeenCalledWith(
       '[ERROR]: selectAndCatchSilently',
       expect.any(Error)

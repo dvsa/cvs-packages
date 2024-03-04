@@ -33,9 +33,7 @@ export class SimpleEmailService {
    * @param {Partial<SESClientConfig>} config - The SES configuration object.
    * @returns {SESClient}
    */
-  static getClient(
-    config: Partial<SESClientConfig> = SimpleEmailService.defaultConfig
-  ): SESClient {
+  static getClient(config: Partial<SESClientConfig> = SimpleEmailService.defaultConfig): SESClient {
     if (process.env.USE_CREDENTIALS === 'true') {
       config.credentials = fromIni();
     }

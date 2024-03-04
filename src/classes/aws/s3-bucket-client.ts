@@ -17,9 +17,7 @@ export class S3Storage {
    * @param {Partial<S3ClientConfig>} config - The S3 configuration object.
    * @return {S3Client}
    */
-  static getClient(
-    config: Partial<S3ClientConfig> = S3Storage.defaultConfig
-  ): S3Client {
+  static getClient(config: Partial<S3ClientConfig> = S3Storage.defaultConfig): S3Client {
     if (process.env.USE_CREDENTIALS === 'true') {
       config.credentials = fromIni();
     }

@@ -27,53 +27,51 @@ describe('EnvironmentVariables', () => {
 
   describe('defaultIfNotPresent', () => {
     it('should return the default value if the input is undefined', () => {
-      expect(
-        EnvironmentVariables.defaultIfNotPresent(undefined, 'defaultValue')
-      ).toEqual('defaultValue');
+      expect(EnvironmentVariables.defaultIfNotPresent(undefined, 'defaultValue')).toEqual(
+        'defaultValue'
+      );
     });
 
     it('should return the default value if the input is null', () => {
-      expect(
-        EnvironmentVariables.defaultIfNotPresent(null, 'defaultValue')
-      ).toEqual('defaultValue');
+      expect(EnvironmentVariables.defaultIfNotPresent(null, 'defaultValue')).toEqual(
+        'defaultValue'
+      );
     });
 
     it('should return the default value if the input is an empty string', () => {
-      expect(
-        EnvironmentVariables.defaultIfNotPresent('', 'defaultValue')
-      ).toEqual('defaultValue');
+      expect(EnvironmentVariables.defaultIfNotPresent('', 'defaultValue')).toEqual('defaultValue');
     });
 
     it('should return the input value if it is present', () => {
-      expect(
-        EnvironmentVariables.defaultIfNotPresent('inputValue', 'defaultValue')
-      ).toEqual('inputValue');
+      expect(EnvironmentVariables.defaultIfNotPresent('inputValue', 'defaultValue')).toEqual(
+        'inputValue'
+      );
     });
   });
 
   describe('throwIfNotPresent', () => {
     it('should throw an error if the value is undefined', () => {
-      expect(() =>
-        EnvironmentVariables.throwIfNotPresent(undefined, 'configKey')
-      ).toThrow('Configuration item configKey was not provided with a value');
+      expect(() => EnvironmentVariables.throwIfNotPresent(undefined, 'configKey')).toThrow(
+        'Configuration item configKey was not provided with a value'
+      );
     });
 
     it('should throw an error if the value is null', () => {
-      expect(() =>
-        EnvironmentVariables.throwIfNotPresent(null, 'configKey')
-      ).toThrow('Configuration item configKey was not provided with a value');
+      expect(() => EnvironmentVariables.throwIfNotPresent(null, 'configKey')).toThrow(
+        'Configuration item configKey was not provided with a value'
+      );
     });
 
     it('should throw an error if the value is an empty string', () => {
-      expect(() =>
-        EnvironmentVariables.throwIfNotPresent('', 'configKey')
-      ).toThrow('Configuration item configKey was not provided with a value');
+      expect(() => EnvironmentVariables.throwIfNotPresent('', 'configKey')).toThrow(
+        'Configuration item configKey was not provided with a value'
+      );
     });
 
     it('should return the value if it is present', () => {
-      expect(
-        EnvironmentVariables.throwIfNotPresent('validValue', 'configKey')
-      ).toEqual('validValue');
+      expect(EnvironmentVariables.throwIfNotPresent('validValue', 'configKey')).toEqual(
+        'validValue'
+      );
     });
   });
 });

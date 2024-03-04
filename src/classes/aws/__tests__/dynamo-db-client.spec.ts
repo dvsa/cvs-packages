@@ -1,10 +1,7 @@
-import {
-  DynamoDBClient,
-  ScanCommand,
-  ScanCommandInput,
-} from '@aws-sdk/client-dynamodb';
-import { DynamoDb } from '../dynamo-db-client';
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import { ScanCommand, ScanCommandInput } from '@aws-sdk/lib-dynamodb';
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
+import { DynamoDb } from '../dynamo-db-client';
 
 // Mock the AWS SDK dependencies
 jest.mock('@aws-sdk/client-dynamodb', () => ({
@@ -13,11 +10,13 @@ jest.mock('@aws-sdk/client-dynamodb', () => ({
 }));
 
 jest.mock('@aws-sdk/credential-providers', () => ({
+  ...jest.requireActual('@aws-sdk/credential-providers'),
   fromEnv: jest.fn().mockReturnValue('envCredentials'),
   fromIni: jest.fn().mockReturnValue('iniCredentials'),
 }));
 
 jest.mock('@aws-sdk/lib-dynamodb', () => ({
+  ...jest.requireActual('@aws-sdk/lib-dynamodb'),
   DynamoDBDocumentClient: {
     from: jest.fn(() => jest.fn()),
   },

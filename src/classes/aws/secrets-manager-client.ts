@@ -38,9 +38,7 @@ export class SecretsManager {
     config: Partial<SecretsManagerClientConfig> = SecretsManager.defaultConfig
   ): Promise<T> {
     try {
-      const secretValue = await this.getClient(config).send(
-        new GetSecretValueCommand(params)
-      );
+      const secretValue = await this.getClient(config).send(new GetSecretValueCommand(params));
 
       const secret = JSON.parse(secretValue.SecretString || '');
 
