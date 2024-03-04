@@ -4,6 +4,7 @@ import {
   ScanCommandInput,
 } from '@aws-sdk/client-dynamodb';
 import { DynamoDb } from '../dynamo-db-client';
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 
 // Mock the AWS SDK dependencies
 jest.mock('@aws-sdk/client-dynamodb', () => ({
@@ -14,6 +15,12 @@ jest.mock('@aws-sdk/client-dynamodb', () => ({
 jest.mock('@aws-sdk/credential-providers', () => ({
   fromEnv: jest.fn().mockReturnValue('envCredentials'),
   fromIni: jest.fn().mockReturnValue('iniCredentials'),
+}));
+
+jest.mock('@aws-sdk/lib-dynamodb', () => ({
+  DynamoDBDocumentClient: {
+    from: jest.fn(() => jest.fn()),
+  },
 }));
 
 describe('DynamoDb', () => {
@@ -67,9 +74,9 @@ describe('DynamoDb', () => {
 
     beforeEach(() => {
       mockSend = jest.fn();
-      (DynamoDBClient as jest.Mock).mockImplementation(() => ({
+      (DynamoDBDocumentClient.from as jest.Mock).mockReturnValue({
         send: mockSend,
-      }));
+      });
     });
 
     it('should scan all items in a single request', async () => {
