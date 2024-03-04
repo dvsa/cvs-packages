@@ -5,6 +5,8 @@ import {
   ScanCommand,
   ScanCommandInput,
 } from '@aws-sdk/client-dynamodb';
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
+
 import { fromEnv, fromIni } from '@aws-sdk/credential-providers';
 
 export class DynamoDb {
@@ -21,7 +23,7 @@ export class DynamoDb {
    */
   static getClient(
     clientConfig: Partial<DynamoDBClientConfig> = DynamoDb.defaultConfig
-  ): DynamoDBClient {
+  ): DynamoDBDocumentClient {
     if (process.env.USE_CREDENTIALS === 'true') {
       clientConfig.credentials = fromIni();
 
@@ -31,7 +33,7 @@ export class DynamoDb {
       clientConfig.endpoint = process.env.DDB_OFFLINE_ENDPOINT;
     }
 
-    return new DynamoDBClient(clientConfig);
+    return DynamoDBDocumentClient.from(new DynamoDBClient(clientConfig));
   }
 
   /**
