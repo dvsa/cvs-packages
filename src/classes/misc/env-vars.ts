@@ -14,10 +14,7 @@ export class EnvironmentVariables {
    * @param value
    * @param defaultValue
    */
-  static defaultIfNotPresent<T>(
-    value: string | null | undefined,
-    defaultValue: T
-  ): T {
+  static defaultIfNotPresent<T>(value: string | null | undefined, defaultValue: T): T {
     if (!value || value?.trim().length === 0) {
       return defaultValue;
     }
@@ -30,14 +27,9 @@ export class EnvironmentVariables {
    * @param value
    * @param configKey
    */
-  static throwIfNotPresent<T>(
-    value: string | null | undefined,
-    configKey: string
-  ): T {
+  static throwIfNotPresent<T>(value: string | null | undefined, configKey: string): T {
     if (!value || value?.trim().length === 0) {
-      throw new Error(
-        `Configuration item ${configKey} was not provided with a value`
-      );
+      throw new Error(`Configuration item ${configKey} was not provided with a value`);
     }
     return value as T;
   }

@@ -1,12 +1,6 @@
-import {
-  AttributeValue,
-  DynamoDBClient,
-  DynamoDBClientConfig,
-  ScanCommand,
-  ScanCommandInput,
-} from '@aws-sdk/client-dynamodb';
+import { AttributeValue, DynamoDBClient, DynamoDBClientConfig } from '@aws-sdk/client-dynamodb';
+import { ScanCommand, ScanCommandInput } from '@aws-sdk/lib-dynamodb';
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
-
 import { fromEnv, fromIni } from '@aws-sdk/credential-providers';
 
 export class DynamoDb {
@@ -48,8 +42,10 @@ export class DynamoDb {
     clientConfig: Partial<DynamoDBClientConfig> = DynamoDb.defaultConfig
   ): Promise<T[]> {
     const rows: T[] = [];
-    let lastEvaluatedKey: Record<string, AttributeValue> | undefined =
-      undefined;
+
+    let lastEvaluatedKey: Record<string, AttributeValue> | undefined = undefined;
+
+    const client = this.getClient(clientConfig);
 
     const params = {
       ExclusiveStartKey: lastEvaluatedKey,
@@ -57,9 +53,7 @@ export class DynamoDb {
     } as ScanCommandInput;
 
     do {
-      const data = await this.getClient(clientConfig).send(
-        new ScanCommand(params)
-      );
+      const data = await client.send(new ScanCommand(params));
 
       if (data.Items) rows.push(...(data.Items as T[]));
 

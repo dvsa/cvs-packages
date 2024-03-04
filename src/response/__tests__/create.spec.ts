@@ -38,9 +38,7 @@ describe('Response', () => {
 
   it('should return an object with a body & headers', () => {
     // ACT
-    const resp = Response.status(200)
-      .headers(MOCKS.HEADERS)
-      .payload(MOCKS.PAYLOAD);
+    const resp = Response.status(200).headers(MOCKS.HEADERS).payload(MOCKS.PAYLOAD);
     // ASSERT
     expect(resp).toEqual({
       statusCode: 200,
