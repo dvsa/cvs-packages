@@ -21,7 +21,6 @@ export class FeatureFlagsClient {
     maxAge: MAX_AGE,
   };
 
-  // TODO: Refactor to provide clientName in get
   constructor(clientName: FeatureFlagsClientName) {
     this.profileName = clientName;
   }
