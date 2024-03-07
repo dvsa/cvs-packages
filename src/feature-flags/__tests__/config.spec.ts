@@ -4,17 +4,16 @@ jest.mock('@aws-lambda-powertools/parameters/appconfig', () => ({
   getAppConfig,
 }));
 
-import { defaultFeatureFlagConfig } from '../config';
-import { FeatureFlagsClient, FeatureFlagsClientName } from '../.';
-
-type FeatureFlags = {
-  firstFlag: {
-    enabled: boolean;
-  };
+process.env = {
+  BRANCH: 'prod',
+  FEATURE_FLAGS_MAX_AGE: '10',
+  FEATURE_FLAGS_APP_NAME: 'cvs',
 };
 
+import { FeatureFlagsClient, FeatureFlagsClientName } from '../.';
+
 describe('app config configuration', () => {
-  it('should return feature flags using the default configuration', async () => {
+  it('should return feature flags using the environment configuration', async () => {
     const expectedFlags = {
       firstFlag: {
         enabled: true,
@@ -25,11 +24,13 @@ describe('app config configuration', () => {
     getAppConfig.mockReturnValue(expectedFlags);
 
     const client = new FeatureFlagsClient();
-    const flags = await client.get<FeatureFlags>(FeatureFlagsClientName.VTX);
+    const flags = await client.get(FeatureFlagsClientName.VTX);
 
     expect(flags).toEqual(expectedFlags);
     expect(getAppConfig).toHaveBeenCalledWith(expectedProfile, {
-      ...defaultFeatureFlagConfig,
+      environment: 'prod',
+      application: 'cvs',
+      maxAge: 10,
       transform: 'json',
     });
   });
