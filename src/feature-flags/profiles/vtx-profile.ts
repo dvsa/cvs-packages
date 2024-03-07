@@ -1,10 +1,12 @@
 type WelshTranslationFeatureFlags = {
-  translatePassTestResult: boolean;
-  translateFailTestResult: boolean;
-  translatePrsTestResult: boolean;
+  enabled: boolean;
+  welshTranslation: {
+    translatePassTestResult: boolean;
+    translateFailTestResult: boolean;
+    translatePrsTestResult: boolean;
+  };
 };
 
 export type VTXFeatureFlags = {
-  enabled: boolean;
-  welshCertificate: WelshTranslationFeatureFlags;
+  welshTranslation: WelshTranslationFeatureFlags;
 };
