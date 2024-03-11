@@ -1,6 +1,6 @@
 {
   "name": "@dvsa/cvs-microservice-common",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "Common package to be used in CVS microservices",
   "author": "DVSA",
   "license": "ISC",
@@ -71,5 +71,10 @@
       "npm run lint:fix",
       "npm run format"
     ]
+  },
+  "overrides": {
+    "mybatis-mapper": {
+      "sql-formatter": "^15.2.0"
+    }
   }
 }
