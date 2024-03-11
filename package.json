@@ -71,10 +71,5 @@
       "npm run lint:fix",
       "npm run format"
     ]
-  },
-  "overrides": {
-    "mybatis-mapper": {
-      "sql-formatter": "^15.2.0"
-    }
   }
 }
