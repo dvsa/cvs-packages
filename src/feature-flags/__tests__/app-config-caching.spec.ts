@@ -9,8 +9,9 @@ import {
 } from '@aws-sdk/client-appconfigdata';
 
 import { mockClient } from 'aws-sdk-client-mock';
-import { FeatureFlagsClient, FeatureFlagsClientName } from '..';
+import { FeatureFlagsClientName } from '..';
 import 'aws-sdk-client-mock-jest';
+import { getFeatureFlags } from '../feature-flags';
 
 describe('feature flag caching', () => {
   const initialFeatureFlags = {
@@ -32,7 +33,6 @@ describe('feature flag caching', () => {
   };
 
   const client = mockClient(AppConfigDataClient);
-  const featureFlagsClient = new FeatureFlagsClient();
 
   beforeEach(() => {
     const token = 'FAKE_TOKEN';
@@ -58,9 +58,9 @@ describe('feature flag caching', () => {
   });
 
   it('should return cached feature flags from app config', async () => {
-    const firstFlags = await featureFlagsClient.get(FeatureFlagsClientName.VTX);
-    const secondFlags = await featureFlagsClient.get(FeatureFlagsClientName.VTX);
-    const thirdFlags = await featureFlagsClient.get(FeatureFlagsClientName.VTX);
+    const firstFlags = await getFeatureFlags(FeatureFlagsClientName.VTX);
+    const secondFlags = await getFeatureFlags(FeatureFlagsClientName.VTX);
+    const thirdFlags = await getFeatureFlags(FeatureFlagsClientName.VTX);
 
     // Any second call to the underlying client should return a cache value until it epires.
     // This proves we aren't hitting AWS every time we fetch the app config.
@@ -74,14 +74,14 @@ describe('feature flag caching', () => {
   });
 
   it('should fetch feature flags from aws when the cache clears', async () => {
-    const firstFlags = await featureFlagsClient.get(FeatureFlagsClientName.VTX);
+    const firstFlags = await getFeatureFlags(FeatureFlagsClientName.VTX);
 
     // Force the internal app config cache to clear.
     // This proves we are hitting AWS again when the cache has expired locally.
     clearCaches();
 
-    const secondFlags = await featureFlagsClient.get(FeatureFlagsClientName.VTX);
-    const thirdFlags = await featureFlagsClient.get(FeatureFlagsClientName.VTX);
+    const secondFlags = await getFeatureFlags(FeatureFlagsClientName.VTX);
+    const thirdFlags = await getFeatureFlags(FeatureFlagsClientName.VTX);
 
     expect(firstFlags).toEqual(initialFeatureFlags);
     expect(secondFlags).toEqual(changedFeatureFlags);

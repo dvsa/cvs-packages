@@ -6,7 +6,7 @@ import { FeatureFlagsClientName } from './';
 // Each invocation of a lambda will get new feature flags, and that should not change throughout the lambda lifecycle.
 // However, we don't want to cache them across invocations (ie outside the handler).
 
-export class FeatureFlagsClient {
+class FeatureFlagsClient {
   async get<T>(clientName: FeatureFlagsClientName): Promise<T> {
     const featureFlags = await getAppConfig(`${clientName}-profile`, {
       ...defaultFeatureFlagConfig,
@@ -16,3 +16,8 @@ export class FeatureFlagsClient {
     return featureFlags as T;
   }
 }
+
+export const getFeatureFlags = async <T>(clientName: FeatureFlagsClientName) => {
+  const client = new FeatureFlagsClient();
+  return await client.get<T>(clientName);
+};
