@@ -41,6 +41,7 @@
     "@aws-sdk/lib-dynamodb": "^3.525.0",
     "class-transformer": "^0.5.1",
     "dayjs": "^1.11.10",
+    "lodash.merge": "^4.6.2",
     "mybatis-mapper": "^0.8.0",
     "mysql2": "^3.9.1"
   },
@@ -61,7 +62,6 @@
     "husky": "^9.0.2",
     "jest": "^29.7.0",
     "lint-staged": "^15.2.0",
-    "lodash.merge": "^4.6.2",
     "prettier": "^3.2.4",
     "rimraf": "^5.0.5",
     "ts-jest": "^29.1.2",
