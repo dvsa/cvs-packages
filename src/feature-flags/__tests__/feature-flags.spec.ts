@@ -5,7 +5,8 @@ jest.mock('@aws-lambda-powertools/parameters/appconfig', () => ({
 }));
 
 import { defaultFeatureFlagConfig } from '../config';
-import { FeatureFlagsClient, FeatureFlagsClientName } from '../.';
+import { FeatureFlagsClientName } from '../.';
+import { getFeatureFlags } from '../feature-flags';
 
 type FeatureFlags = {
   firstFlag: {
@@ -24,8 +25,7 @@ describe('app config configuration', () => {
 
     getAppConfig.mockReturnValue(expectedFlags);
 
-    const client = new FeatureFlagsClient();
-    const flags = await client.get<FeatureFlags>(FeatureFlagsClientName.VTX);
+    const flags = await getFeatureFlags<FeatureFlags>(FeatureFlagsClientName.VTX);
 
     expect(flags).toEqual(expectedFlags);
     expect(getAppConfig).toHaveBeenCalledWith(expectedProfile, {

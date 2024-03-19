@@ -10,7 +10,8 @@ process.env = {
   FEATURE_FLAGS_APP_NAME: 'cvs',
 };
 
-import { FeatureFlagsClient, FeatureFlagsClientName } from '../.';
+import { FeatureFlagsClientName } from '../.';
+import { getFeatureFlags } from '../feature-flags';
 
 describe('app config configuration', () => {
   it('should return feature flags using the environment configuration', async () => {
@@ -23,8 +24,7 @@ describe('app config configuration', () => {
 
     getAppConfig.mockReturnValue(expectedFlags);
 
-    const client = new FeatureFlagsClient();
-    const flags = await client.get(FeatureFlagsClientName.VTX);
+    const flags = await getFeatureFlags(FeatureFlagsClientName.VTX);
 
     expect(flags).toEqual(expectedFlags);
     expect(getAppConfig).toHaveBeenCalledWith(expectedProfile, {
