@@ -1,6 +1,6 @@
 {
   "name": "@dvsa/cvs-microservice-common",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "description": "Common package to be used in CVS microservices",
   "author": "DVSA",
   "license": "ISC",
@@ -33,12 +33,12 @@
     "postpublish": "git clean -fd && npm run clean:temp"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.525.0",
     "@aws-sdk/client-s3": "^3.525.0",
     "@aws-sdk/client-secrets-manager": "^3.525.0",
     "@aws-sdk/client-ses": "^3.525.0",
     "@aws-sdk/credential-providers": "^3.525.0",
     "@aws-sdk/lib-dynamodb": "^3.525.0",
+    "@aws-sdk/util-dynamodb": "^3.540.0",
     "class-transformer": "^0.5.1",
     "dayjs": "^1.11.10",
     "lodash.merge": "^4.6.2",
