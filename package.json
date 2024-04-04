@@ -9,6 +9,7 @@
     "classes/**",
     "response/**",
     "feature-flags/**",
+    "functions/**",
     "LICENSE",
     "README.md",
     "package.json"
