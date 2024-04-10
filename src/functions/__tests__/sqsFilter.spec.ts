@@ -1,5 +1,5 @@
 import { unmarshall } from '@aws-sdk/util-dynamodb';
-import { processRecord } from '../sqsFilter'; // Assuming unmarshall comes from aws-sdk
+import { processRecord } from '../sqsFilter';
 
 jest.mock('@aws-sdk/util-dynamodb', () => ({
   unmarshall: jest.fn(),
