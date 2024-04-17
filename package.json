@@ -1,6 +1,6 @@
 {
   "name": "@dvsa/cvs-microservice-common",
-  "version": "0.9.6",
+  "version": "0.9.7",
   "description": "Common package to be used in CVS microservices",
   "author": "DVSA",
   "license": "ISC",
@@ -45,7 +45,7 @@
     "dayjs": "^1.11.10",
     "lodash.merge": "^4.6.2",
     "mybatis-mapper": "^0.8.0",
-    "mysql2": "^3.9.1"
+    "mysql2": "^3.9.4"
   },
   "devDependencies": {
     "@aws-lambda-powertools/parameters": "^2.0.2",
