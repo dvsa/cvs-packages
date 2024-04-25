@@ -45,7 +45,7 @@
     "dayjs": "^1.11.10",
     "lodash.merge": "^4.6.2",
     "mybatis-mapper": "^0.8.0",
-    "mysql2": "^3.9.4"
+    "mysql2": "^3.9.7"
   },
   "devDependencies": {
     "@aws-lambda-powertools/parameters": "^2.0.2",
