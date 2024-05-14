@@ -6,6 +6,7 @@ import {
   S3ClientConfig,
 } from '@aws-sdk/client-s3';
 import { fromIni } from '@aws-sdk/credential-providers';
+import * as AWSxRay from 'aws-xray-sdk';
 
 export class S3Storage {
   private static readonly defaultConfig: Partial<S3ClientConfig> = {
@@ -22,7 +23,10 @@ export class S3Storage {
       config.credentials = fromIni();
     }
 
-    return new S3Client(config);
+    // If tracing is enabled, then capture the client with AWS X-Ray
+    return process.env._X_AMZN_TRACE_ID
+      ? AWSxRay.captureAWSv3Client(new S3Client(config))
+      : new S3Client(config);
   }
 
   /**
