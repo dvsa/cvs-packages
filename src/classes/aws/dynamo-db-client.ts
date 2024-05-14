@@ -1,7 +1,7 @@
 import { AttributeValue, DynamoDBClient, DynamoDBClientConfig } from '@aws-sdk/client-dynamodb';
-import { ScanCommand, ScanCommandInput } from '@aws-sdk/lib-dynamodb';
-import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
+import { DynamoDBDocumentClient, ScanCommand, ScanCommandInput } from '@aws-sdk/lib-dynamodb';
 import { fromEnv, fromIni } from '@aws-sdk/credential-providers';
+import * as AWSxRay from 'aws-xray-sdk';
 
 export class DynamoDb {
   private static readonly defaultConfig: Partial<DynamoDBClientConfig> = {
@@ -27,7 +27,12 @@ export class DynamoDb {
       clientConfig.endpoint = process.env.DDB_OFFLINE_ENDPOINT;
     }
 
-    return DynamoDBDocumentClient.from(new DynamoDBClient(clientConfig));
+    // If tracing is enabled, then capture the client with AWS X-Ray
+    const client = process.env._X_AMZN_TRACE_ID
+      ? AWSxRay.captureAWSv3Client(new DynamoDBClient(clientConfig))
+      : new DynamoDBClient(clientConfig);
+
+    return DynamoDBDocumentClient.from(client);
   }
 
   /**

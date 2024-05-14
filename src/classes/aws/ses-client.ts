@@ -5,6 +5,7 @@ import {
   SendEmailCommandOutput,
 } from '@aws-sdk/client-ses';
 import { fromIni } from '@aws-sdk/credential-providers';
+import * as AWSxRay from 'aws-xray-sdk';
 
 export interface SendPayload {
   to: string[];
@@ -38,7 +39,10 @@ export class SimpleEmailService {
       config.credentials = fromIni();
     }
 
-    return new SESClient(config);
+    // If tracing is enabled, then capture the client with AWS X-Ray
+    return process.env._X_AMZN_TRACE_ID
+      ? AWSxRay.captureAWSv3Client(new SESClient(config))
+      : new SESClient(config);
   }
 
   /**
