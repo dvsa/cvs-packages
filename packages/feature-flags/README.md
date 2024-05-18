@@ -21,4 +21,3 @@ Feature flags for the Commercial Vehicle Services (CVS) system, published as a G
 ###### The code that will be published lives inside the ./src directory.
 
 If wishing to add new top level directories to the output, then they must be included in the `files` array inside `package.json` as well as included in the `clean:temp` command.
-
