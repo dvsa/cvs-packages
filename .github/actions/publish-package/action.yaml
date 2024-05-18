@@ -1,0 +1,51 @@
+name: Publish Package
+
+description: Composite action to publish a package to npm
+
+inputs:
+  package-path:
+    description: 'The path to the package to publish'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: 📨 Checkout
+      uses: actions/checkout@v4
+
+    - name: 🔍 Read .nvmrc
+      id: nvm
+      shell: bash
+      run: echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
+
+    - name: ⚙️ Setup Node.js ${{ env.NVMRC }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NVMRC }}
+        cache: 'npm'
+
+    - name: ➕ Install dependencies
+      shell: bash
+      run: npm ci
+
+    - name: ➕ Install package dependencies
+      run: npm ci
+      shell: bash
+      working-directory: ${{ inputs.package-path }}
+
+    - name: ⚒️ Build package
+      run: npm run build
+      shell: bash
+      working-directory: ${{ inputs.package-path }}
+
+    - name: 🧪️ Unit test
+      run: npm run test:coverage
+      shell: bash
+      working-directory: ${{ inputs.package-path }}
+
+    - name: ☁️ Publish on npm
+      run: npm publish
+      shell: bash
+      working-directory: ${{ inputs.package-path }}
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
