@@ -28,10 +28,10 @@ jobs:
         run: npm ci --include=optional
 
       - name: ⚒️ Build project
-        run: npx lerna run build
+        run: npm run build --ws
 
       - name: 📝 Lint codebase
-        run: npx lerna run lint
+        run: npm run lint --ws
 
       - name: 🧪️ Execute unit tests with coverage
-        run: npx lerna run test:coverage
+        run: npm run test:coverage --ws

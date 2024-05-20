@@ -3,6 +3,9 @@ name: Publish Package
 description: Composite action to publish a package to npm
 
 inputs:
+  dry-run:
+    description: 'Run the publish command in dry-run mode i.e. no publish is executed'
+    required: false
   package-path:
     description: 'The path to the package to publish'
     required: true
@@ -44,6 +47,7 @@ runs:
       working-directory: ${{ inputs.package-path }}
 
     - name: ☁️ Publish on npm
+      if: ${{ !inputs.dry-run }}
       run: npm publish
       shell: bash
       working-directory: ${{ inputs.package-path }}

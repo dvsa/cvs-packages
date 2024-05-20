@@ -116,5 +116,5 @@
     /* Skip type checking all .d.ts files. */
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["../../node_modules", "src/**/*.spec.ts", "src/**/*.spec.d.ts"]
+  "exclude": ["node_modules", "src/**/*.spec.ts", "src/**/*.spec.d.ts"]
 }
