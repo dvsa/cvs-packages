@@ -1,1 +1,1 @@
-npx lerna run lint && npx lerna run test && npx lerna run gitSecrets
+npm run lint --ws && npm run test --ws && npm run gitSecrets --ws
