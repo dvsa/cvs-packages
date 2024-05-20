@@ -55,8 +55,6 @@ jobs:
         with:
           dry-run: ${{ inputs.dry-run }}
           package-path: 'packages/common'
-        env:
-          NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
   publish-feature-flags:
     needs: orchestrator
@@ -68,5 +66,3 @@ jobs:
         with:
           dry-run: ${{ inputs.dry-run }}
           package-path: 'packages/feature-flags'
-        env:
-          NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
