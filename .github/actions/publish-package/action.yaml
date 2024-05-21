@@ -13,9 +13,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: 📨 Checkout
-      uses: actions/checkout@v4
-
     - name: 🔍 Read .nvmrc
       id: nvm
       shell: bash
