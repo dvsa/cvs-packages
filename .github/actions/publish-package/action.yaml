@@ -9,13 +9,13 @@ inputs:
   package-path:
     description: 'The path to the package to publish'
     required: true
+  token:
+    description: 'The npm token to use for publishing'
+    required: true
 
 runs:
   using: composite
   steps:
-    - name: 📨 Checkout
-      uses: actions/checkout@v4
-
     - name: 🔍 Read .nvmrc
       id: nvm
       shell: bash
@@ -52,4 +52,4 @@ runs:
       shell: bash
       working-directory: ${{ inputs.package-path }}
       env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+        NODE_AUTH_TOKEN: ${{ inputs.token }}

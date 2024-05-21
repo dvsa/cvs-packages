@@ -50,19 +50,27 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ needs.orchestrator.outputs.publish-common || github.event_name == 'workflow_dispatch' && inputs.package == 'common'}}
     steps:
+      - name: 📨 Checkout
+        uses: actions/checkout@v4
+
       - name: Publish Package
         uses: ./.github/actions/publish-package
         with:
           dry-run: ${{ inputs.dry-run }}
           package-path: 'packages/common'
+          token: ${{ secrets.NPM_AUTH_TOKEN }}
 
   publish-feature-flags:
     needs: orchestrator
     runs-on: ubuntu-latest
     if: ${{ needs.orchestrator.outputs.publish-feature-flags || github.event_name == 'workflow_dispatch' && inputs.package == 'feature-flags' }}
     steps:
+      - name: 📨 Checkout
+        uses: actions/checkout@v4
+
       - name: Publish Package
         uses: ./.github/actions/publish-package
         with:
           dry-run: ${{ inputs.dry-run }}
           package-path: 'packages/feature-flags'
+          token: ${{ secrets.NPM_AUTH_TOKEN }}
