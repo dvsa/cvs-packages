@@ -1,9 +1,5 @@
 .DS_Store
 .idea/
-api
-classes/
-response/
 coverage/
 dist/
 node_modules/
-!src/**

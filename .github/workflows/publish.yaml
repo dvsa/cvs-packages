@@ -3,55 +3,66 @@ name: Publish to NPM
 on:
   workflow_dispatch:
     inputs:
-      version:
-        description: 'Version bump type'
+      dry-run:
+        description: 'Run the workflow without publishing to npm'
+        required: false
+        type: boolean
+      package:
+        description: 'The package to publish'
+        required: true
         type: choice
         options:
-          - patch
-          - minor
-          - major
-        required: true
-        default: 'patch'
+          - 'common'
+          - 'feature-flags'
   push:
     branches:
       - main
 
 jobs:
-  publish:
+  orchestrator:
+    name: Orchestrator
     runs-on: ubuntu-latest
+    outputs:
+      publish-common: ${{ steps.changed-common.outputs.any_changed == 'true' || null }}
+      publish-feature-flags: ${{ steps.changed-feat-flags.outputs.any_changed == 'true' || null }}
     steps:
       - name: 📨 Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: ⚙️ Setup Node
-        id: node-setup
-        uses: ./.github/actions/setup-node
+      - name: Check for `/packages/common` changes
+        uses: tj-actions/changed-files@v44
+        id: changed-common
+        with:
+          files: |
+            packages/common/**
 
-      - name: 🔺 Bump the package version
-        if: ${{ github.event_name == 'workflow_dispatch' }}
-        run: npm version ${{ inputs.version || 'patch' }} --no-git-tag-version
+      - name: Check for `/packages/feature-flags` changes
+        uses: tj-actions/changed-files@v44
+        id: changed-feat-flags
+        with:
+          files: |
+            packages/feature-flags/**      
 
-      - name: ➕ Install dependencies
-        shell: bash
-        run: npm ci
+  publish-common:
+    needs: orchestrator
+    runs-on: ubuntu-latest
+    if: ${{ needs.orchestrator.outputs.publish-common || github.event_name == 'workflow_dispatch' && inputs.package == 'common'}}
+    steps:
+      - name: Publish Package
+        uses: ./.github/actions/publish-package
+        with:
+          dry-run: ${{ inputs.dry-run }}
+          package-path: 'packages/common'
 
-      - name: 📝 Commit & Push version bump
-        if: ${{ github.event_name == 'workflow_dispatch' }}
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git commit -am "chore(version): bump to v$(jq '.version' package.json -r)"
-          git push --no-verify
-
-      - name: ⚒️ Build package
-        run: npm run build
-
-      - name: 🧪️ Unit test
-        run: npm run test:coverage
-
-      - name: ☁️ Publish on npm
-        run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+  publish-feature-flags:
+    needs: orchestrator
+    runs-on: ubuntu-latest
+    if: ${{ needs.orchestrator.outputs.publish-feature-flags || github.event_name == 'workflow_dispatch' && inputs.package == 'feature-flags' }}
+    steps:
+      - name: Publish Package
+        uses: ./.github/actions/publish-package
+        with:
+          dry-run: ${{ inputs.dry-run }}
+          package-path: 'packages/feature-flags'

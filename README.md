@@ -1,41 +1,32 @@
-# cvs-microservice-common
+# CVS Packages
 
-Common code used by the various serverless microservices within the Commercial Vehicle Services (CVS) system, published as a GitHub package.
+A mono-repository for Commercial Vehicle Services (**CVS**) packages.
 
-### Pre-requisites
+The components can be found in the `packages/*` directory.
 
-- Node.js (Please see `.nvmrc` for specific version)
-- `npm` (If using [n](https://github.com/tj/n) or [nvm](https://github.com/nvm-sh/nvm), this will be automatically managed)
-- Security
-  - [Git secrets](https://github.com/awslabs/git-secrets)
-  - [ScanRepo](https://github.com/UKHomeOffice/repo-security-scanner)
-    - Unzip `repo-security-scanner_<version>_Darwin_<architercture>.tar.gz` and rename the executable inside the folder
-      to `scanrepo` - Add executable to path (using `echo $PATH` to find your path)
+### Adding new packages
+When adding a new package, the best approach is to create a new directory under `packages/*` & run `npm init -y`
 
-### Getting started
+This will create a basic `package.json` file which can be updated with the relevant information.
 
-###### Run the following command after cloning the project
+### Deploying new packages
 
-1. `npm install` (or `npm i`)
+There is a [publish.yaml](./.github/workflows/publish.yaml) GitHub action integrated into the repo, that can be used to publish new packages to the NPM registry.
 
-###### The code that will be published lives inside the ./src directory.
+You need to add a new step into the `Orchestrator` to listen out for changed files in the desired package.
 
-If wishing to add new top level directories to the output, then they must be included in the `files` array inside `package.json` as well as included in the `clean:temp` command.
+You can then replicate the pattern of publishing like so
 
-### Publishing
-
-In order to see the output of what will be published, run the following command:
-
-```shell
-npm publish --dry-run
+```bash
+  publish-[PKG]:
+    needs: orchestrator
+    runs-on: ubuntu-latest
+    if: ${{ needs.orchestrator.outputs.publish-[PKG] || github.event_name == 'workflow_dispatch' && inputs.package == [PKG]}}
+    steps:
+      - name: Publish Package
+        uses: ./.github/actions/publish-package
+        with:
+          package-path: 'packages/[PKG]'
+        env:
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 ```
-
-There are two ways in which this package can/should be published:
-
-###### Requires manual version bump via the PR
-
-- Upon merge into `main` branch, the package will be published via a GHA workflow.
-
-###### Version bump available via the GUI
-
-- A `workflow_dispatch` can be executed which will commit, push & publish the version bump and latest code.

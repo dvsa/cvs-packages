@@ -25,13 +25,13 @@ jobs:
           cache: 'npm'
 
       - name: ➕ Install dependencies
-        run: npm ci
+        run: npm ci --include=optional
 
       - name: ⚒️ Build project
-        run: npm run build
+        run: npm run build --ws
 
       - name: 📝 Lint codebase
-        run: npm run lint
+        run: npm run lint --ws
 
       - name: 🧪️ Execute unit tests with coverage
-        run: npm run test:coverage
+        run: npm run test:coverage --ws
