@@ -19,6 +19,7 @@ type ProxyDetails = {
 type ServicePackagerOptions = {
   nodeMajorVersion: string;
   proxy?: ProxyDetails;
+  esbuildOptions?: BuildOptions;
   artifactOutputDir?: string;
 }
 
@@ -45,7 +46,13 @@ export class ServicePackager {
    * @param {ServicePackagerOptions} servicePackagerOptions
    */
   constructor(servicePackagerOptions: ServicePackagerOptions) {
-    Object.assign(ServicePackager.coreBuildOptions, { target: `node${servicePackagerOptions.nodeMajorVersion}` });
+    // Merge the core build options with the provided options (if any).
+    // This allows for no config to be passed, but also the ability to override.
+    Object.assign(ServicePackager.coreBuildOptions, {
+      target: `node${servicePackagerOptions.nodeMajorVersion}`,
+      ...(servicePackagerOptions.esbuildOptions || {}),
+    });
+
     this.proxyDetails = servicePackagerOptions.proxy;
     this.artifactOutputDir = servicePackagerOptions.artifactOutputDir || 'artifacts';
   }
