@@ -53,7 +53,7 @@ jobs:
       - name: 📨 Checkout
         uses: actions/checkout@v4
 
-      - name: Publish Package
+      - name: Publish package "packages/common" ${{ inputs.dry-run && 'in' || 'not in' }} dry run mode
         uses: ./.github/actions/publish-package
         with:
           dry-run: ${{ inputs.dry-run }}
@@ -68,7 +68,7 @@ jobs:
       - name: 📨 Checkout
         uses: actions/checkout@v4
 
-      - name: Publish Package
+      - name: Publish package "packages/feature-flags" ${{ inputs.dry-run && 'in' || 'not in' }} dry run mode
         uses: ./.github/actions/publish-package
         with:
           dry-run: ${{ inputs.dry-run }}
