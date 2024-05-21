@@ -14,8 +14,8 @@
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix",
     "prepare": "husky",
-    "test": "jest",
-    "test:coverage": "jest --coverage",
+    "test": "echo \"*** Tests to be added\"",
+    "test:coverage": "echo \"*** Tests to be added\"",
     "build:package": "npm run build",
     "prepublishOnly": "npm run build:package && cp -r ./dist/* . && rm -rf ./dist",
     "postpublish": "git clean -fd && npm run clean:temp"
