@@ -58,6 +58,7 @@ jobs:
         with:
           dry-run: ${{ inputs.dry-run }}
           package-path: 'packages/common'
+          token: ${{ secrets.NPM_AUTH_TOKEN }}
 
   publish-feature-flags:
     needs: orchestrator
@@ -72,3 +73,4 @@ jobs:
         with:
           dry-run: ${{ inputs.dry-run }}
           package-path: 'packages/feature-flags'
+          token: ${{ secrets.NPM_AUTH_TOKEN }}
