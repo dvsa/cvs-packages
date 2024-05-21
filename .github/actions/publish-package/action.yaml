@@ -1,4 +1,4 @@
-name: Publish Package
+name: Publish Package "${{ inputs.package-path }}" ${{ inputs.dry-run && 'in' || 'not in' }} dry run mode
 
 description: Composite action to publish a package to npm
 
