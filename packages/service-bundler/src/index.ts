@@ -11,6 +11,13 @@ enum LogColour {
   Yellow = '33'
 }
 
+type CustomBuildOptions = {
+  /**
+   * Whether to create zip files for the build artifacts
+   */
+  zip?: boolean;
+}
+
 type ProxyDetails = {
   name: string;
   version: string;
@@ -127,22 +134,24 @@ export class ServicePackager {
 
   /**
    * Build the service
+   * @param {CustomBuildOptions} buildOptions
    */
-  public async build() {
+  public async build(buildOptions?: CustomBuildOptions) {
     this.logger('Building service...');
+
     await this.buildAPIProxy();
+
     await this.buildFunctions();
+
+    if (buildOptions?.zip) {
+      await this.zip();
+    }
   }
 
   /**
    * Zip the service artifacts
-   * @param {boolean} build - Optional build flag to build the service before zipping
    */
-  async zip(build: boolean = false) {
-    if (build) {
-      await this.build();
-    }
-
+  async zip() {
     this.logger('Zipping service...');
 
     const functionBundlesDir = join(process.cwd(), 'dist', 'functions');
