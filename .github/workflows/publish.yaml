@@ -14,6 +14,7 @@ on:
         options:
           - 'common'
           - 'feature-flags'
+          - 'service-bundler'
   push:
     branches:
       - main
@@ -25,6 +26,7 @@ jobs:
     outputs:
       publish-common: ${{ steps.changed-common.outputs.any_changed == 'true' || null }}
       publish-feature-flags: ${{ steps.changed-feat-flags.outputs.any_changed == 'true' || null }}
+      publish-service-bundler: ${{ steps.changed-service-bundler.outputs.any_changed == 'true' || null }}
     steps:
       - name: 📨 Checkout
         uses: actions/checkout@v4
@@ -43,7 +45,14 @@ jobs:
         id: changed-feat-flags
         with:
           files: |
-            packages/feature-flags/**      
+            packages/feature-flags/**    
+
+      - name: Check for `/packages/service-bundler` changes
+        uses: tj-actions/changed-files@v44
+        id: changed-service-bundler
+        with:
+          files: |
+            packages/service-bundler/**          
 
   publish-common:
     needs: orchestrator
@@ -73,4 +82,20 @@ jobs:
         with:
           dry-run: ${{ inputs.dry-run }}
           package-path: 'packages/feature-flags'
+          token: ${{ secrets.NPM_AUTH_TOKEN }}
+
+
+  publish-service-bundler:
+    needs: orchestrator
+    runs-on: ubuntu-latest
+    if: ${{ needs.orchestrator.outputs.publish-service-bundler || github.event_name == 'workflow_dispatch' && inputs.package == 'service-bundler' }}
+    steps:
+      - name: 📨 Checkout
+        uses: actions/checkout@v4
+
+      - name: Publish package "packages/service-bundler" ${{ inputs.dry-run && 'in' || 'not in' }} dry run mode
+        uses: ./.github/actions/publish-package
+        with:
+          dry-run: ${{ inputs.dry-run }}
+          package-path: 'packages/service-bundler'
           token: ${{ secrets.NPM_AUTH_TOKEN }}
