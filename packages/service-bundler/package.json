@@ -1,10 +1,8 @@
 {
   "name": "@dvsa/service-bundler",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "DVSA",
   "license": "ISC",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
   "scripts": {
     "build": "npm run clean && tsc",
     "clean": "rimraf coverage dist && npm run clean:temp",
