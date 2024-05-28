@@ -1,6 +1,5 @@
 {
   "name": "cvs-packages",
-  "version": "0.0.0",
   "description": "Packages to be used in CVS microservices",
   "keywords": [
     "typescript",
