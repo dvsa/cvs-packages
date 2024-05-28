@@ -65,7 +65,7 @@ jobs:
       - name: Publish package "packages/common" ${{ inputs.dry-run && 'in' || 'not in' }} dry run mode
         uses: ./.github/actions/publish-package
         with:
-          dry-run: ${{ inputs.dry-run }}
+          dry-run: ${{ inputs.dry-run && 'true' || 'false' }}
           package-path: 'packages/common'
           token: ${{ secrets.NPM_AUTH_TOKEN }}
 
@@ -80,7 +80,7 @@ jobs:
       - name: Publish package "packages/feature-flags" ${{ inputs.dry-run && 'in' || 'not in' }} dry run mode
         uses: ./.github/actions/publish-package
         with:
-          dry-run: ${{ inputs.dry-run }}
+          dry-run: ${{ inputs.dry-run && 'true' || 'false' }}
           package-path: 'packages/feature-flags'
           token: ${{ secrets.NPM_AUTH_TOKEN }}
 
@@ -95,6 +95,6 @@ jobs:
       - name: Publish package "packages/service-bundler" ${{ inputs.dry-run && 'in' || 'not in' }} dry run mode
         uses: ./.github/actions/publish-package
         with:
-          dry-run: ${{ inputs.dry-run }}
+          dry-run: ${{ inputs.dry-run && 'true' || 'false' }}
           package-path: 'packages/service-bundler'
           token: ${{ secrets.NPM_AUTH_TOKEN }}
