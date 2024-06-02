@@ -5,10 +5,32 @@ updates:
   - package-ecosystem: 'npm'
     # Look for `package.json` and `lock` files in the `root` directory
     directory: '/'
-    # Check the npm registry for updates every day (only weekdays)
+    # Check the npm registry for updates every day (weekdays)
     schedule:
-      interval: 'daily'
+      interval: 'weekly'
     open-pull-requests-limit: 10
+    groups:
+      jest:
+        applies-to: version-updates
+        patterns:
+          - "jest"
+          - "ts-jest"
+      aws-sdk:
+        applies-to: version-updates
+        patterns:
+          - "@aws-sdk/*" 
+      powertools:
+        applies-to: version-updates
+        patterns:
+          - "@aws-lambda-powertools/*"
+      commitlint:
+        applies-to: version-updates
+        patterns:
+          - "@commitlint/*"
+      typescript-eslint:
+        applies-to: version-updates
+        patterns:
+          - "@typescript-eslint/*"
     commit-message:
       prefix: chore
       include: scope
