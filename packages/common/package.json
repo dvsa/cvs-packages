@@ -55,7 +55,7 @@
     "@typescript-eslint/eslint-plugin": "^7.9.0",
     "@typescript-eslint/parser": "^7.9.0",
     "aws-sdk-client-mock": "^3.0.1",
-    "aws-sdk-client-mock-jest": "^3.0.1",
+    "aws-sdk-client-mock-jest": "^4.0.1",
     "eslint": "^8.56.0",
     "eslint-plugin-import": "^2.29.1",
     "husky": "^9.0.2",
