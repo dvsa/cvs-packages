@@ -47,7 +47,9 @@ runs:
       working-directory: ${{ inputs.package-path }}
 
     - name: ☁️ Publish on npm
-      run: npm publish --access public --dry-run=${{ inputs.dry-run }}
+      run: |
+        npm whoami
+        npm publish --access public --dry-run=${{ inputs.dry-run }}
       shell: bash
       working-directory: ${{ inputs.package-path }}
       env:
