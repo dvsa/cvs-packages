@@ -27,6 +27,12 @@ runs:
         node-version: ${{ env.NVMRC }}
         cache: 'npm'
 
+    - name: Create `.npmrc` file
+      shell: bash
+      run: echo "//registry.npmjs.org/:_authToken=$ACCESS_TOKEN" >> ~/.npmrc
+      env:
+        ACCESS_TOKEN: ${{ inputs.token }}
+
     - name: ➕ Install dependencies
       shell: bash
       run: npm ci
@@ -47,7 +53,8 @@ runs:
       working-directory: ${{ inputs.package-path }}
 
     - name: ☁️ Publish on npm
-      run: npm publish --access public --dry-run=${{ inputs.dry-run }}
+      run: |
+        npm publish --access public --dry-run=${{ inputs.dry-run }}
       shell: bash
       working-directory: ${{ inputs.package-path }}
       env:
