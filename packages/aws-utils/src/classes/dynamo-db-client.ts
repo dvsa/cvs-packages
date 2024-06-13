@@ -1,6 +1,11 @@
-import { AttributeValue, DynamoDBClient, DynamoDBClientConfig } from '@aws-sdk/client-dynamodb';
-import { DynamoDBDocumentClient, ScanCommand, ScanCommandInput } from '@aws-sdk/lib-dynamodb';
+import {
+  AttributeValue,
+  DynamoDBClient,
+  type DynamoDBClientConfig,
+} from '@aws-sdk/client-dynamodb';
+import { DynamoDBDocumentClient, ScanCommand, type ScanCommandInput } from '@aws-sdk/lib-dynamodb';
 import { fromEnv, fromIni } from '@aws-sdk/credential-providers';
+import { captureAWSv3Client } from 'aws-xray-sdk';
 import * as AWSxRay from 'aws-xray-sdk';
 
 export class DynamoDb {
@@ -10,8 +15,9 @@ export class DynamoDb {
 
   /**
    * Get a DynamoDB client
-   * - If `process.env.USE_CREDENTIALS` is `true`, credentials will be used from `~/.aws/credentials`
+   * - If `process.env.USE_CREDENTIALS` is `true`, credentials will be read from `~/.aws/credentials`
    * - If `process.env.IS_OFFLINE` is `true`, credentials will be used from .env / serverless.yml file
+   * - If `process.env.IS_OFFLINE` is `true`, ensure the `DDB_OFFLINE_ENDPOINT` env var is set to the local DynamoDB endpoint
    * @param {Partial<DynamoDBClientConfig>} clientConfig
    * @returns {DynamoDBClient}
    */
@@ -32,11 +38,7 @@ export class DynamoDb {
       ? AWSxRay.captureAWSv3Client(new DynamoDBClient(clientConfig))
       : new DynamoDBClient(clientConfig);
 
-    console.warn(
-      'The AWS utils from "@dvsa/cvs-microservice-common" is soon to be deprecated. Please migrate "@dvsa/aws-utils" package instead.'
-    );
-
-    return DynamoDBDocumentClient.from(client);
+    return DynamoDBDocumentClient.from(captureAWSv3Client(client));
   }
 
   /**

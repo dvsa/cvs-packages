@@ -15,6 +15,7 @@ on:
           - 'common'
           - 'feature-flags'
           - 'service-bundler'
+          - 'aws-utils'
   push:
     branches:
       - main
@@ -27,6 +28,7 @@ jobs:
       publish-common: ${{ steps.changed-common.outputs.any_changed == 'true' || null }}
       publish-feature-flags: ${{ steps.changed-feat-flags.outputs.any_changed == 'true' || null }}
       publish-service-bundler: ${{ steps.changed-service-bundler.outputs.any_changed == 'true' || null }}
+      publish-aws-utils: ${{ steps.changed-aws-utils.outputs.any_changed == 'true' || null }}
     steps:
       - name: 📨 Checkout
         uses: actions/checkout@v4
@@ -52,7 +54,14 @@ jobs:
         id: changed-service-bundler
         with:
           files: |
-            packages/service-bundler/**          
+            packages/service-bundler/**
+
+      - name: Check for `/packages/aws-utils` changes
+        uses: tj-actions/changed-files@v44
+        id: changed-aws-utils
+        with:
+          files: |
+            packages/aws-utils/**        
 
   publish-common:
     needs: orchestrator
@@ -97,4 +106,19 @@ jobs:
         with:
           dry-run: ${{ inputs.dry-run && 'true' || 'false' }}
           package-path: 'packages/service-bundler'
+          token: ${{ secrets.NPM_AUTH_TOKEN }}
+
+  publish-aws-utils:
+    needs: orchestrator
+    runs-on: ubuntu-latest
+    if: ${{ needs.orchestrator.outputs.publish-aws-utils || github.event_name == 'workflow_dispatch' && inputs.package == 'aws-utils' }}
+    steps:
+      - name: 📨 Checkout
+        uses: actions/checkout@v4
+
+      - name: Publish package "packages/aws-utils" ${{ inputs.dry-run && 'in' || 'not in' }} dry run mode
+        uses: ./.github/actions/publish-package
+        with:
+          dry-run: ${{ inputs.dry-run && 'true' || 'false' }}
+          package-path: 'packages/aws-utils'
           token: ${{ secrets.NPM_AUTH_TOKEN }}
