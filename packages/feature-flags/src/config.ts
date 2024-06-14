@@ -2,6 +2,7 @@ interface IFeatureFlagsConfig {
   environment: string;
   application: string;
   maxAge: number;
+  requestTimeout: number
 }
 
 declare let process: {
@@ -22,4 +23,5 @@ export const defaultFeatureFlagConfig: IFeatureFlagsConfig = {
   application: APP_NAME,
   environment: ENVIRONMENT_NAME,
   maxAge: MAX_AGE,
+  requestTimeout: 10000,
 };
