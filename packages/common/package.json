@@ -43,7 +43,7 @@
     "class-transformer": "^0.5.1",
     "dayjs": "^1.11.10",
     "mybatis-mapper": "^0.8.0",
-    "mysql2": "^3.9.7"
+    "mysql2": "^3.10.1"
   },
   "devDependencies": {
     "@aws-lambda-powertools/parameters": "^2.0.2",
