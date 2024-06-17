@@ -32,6 +32,7 @@ describe('app config configuration', () => {
       application: 'cvs',
       maxAge: 10,
       transform: 'json',
+      requestTimeout: 10000,
     });
   });
 });
