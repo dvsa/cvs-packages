@@ -41,7 +41,7 @@
     "aws-xray-sdk": "^3.9.0"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.138",
+    "@types/aws-lambda": "^8.10.139",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.14.2",
     "@typescript-eslint/eslint-plugin": "^7.12.0",
