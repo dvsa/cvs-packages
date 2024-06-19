@@ -73,9 +73,15 @@ type ServicePackagerOptions = {
    * Optional configuration options.
    */
   config?: Config;
+  /**
+   * Optional handler file name for the function. The file extension IS required.
+   * e.g. `index.ts` / `handler.ts` / `main.ts`
+   */
+  handlerFileName?: string;
 };
 
 export class ServicePackager {
+  private static handlerFileName: string;
   private static proxyDetails: ProxyDetails;
   private static config: Config;
   private static readonly coreBuildOptions: BuildOptions = {
@@ -110,6 +116,8 @@ export class ServicePackager {
       artifactOutputDir: 'artifacts',
       buildOutputDir: 'dist',
     };
+
+    ServicePackager.handlerFileName = servicePackagerOptions.handlerFileName || 'handler.ts';
   }
 
   /**
@@ -188,7 +196,7 @@ export class ServicePackager {
 
     // Bundle each folder within functions
     for (const dir of directories) {
-      const entryPoint = join(functionsDir, dir, 'handler.ts');
+      const entryPoint = join(functionsDir, dir, ServicePackager.handlerFileName);
       const outdir = join(process.cwd(), ServicePackager.config.buildOutputDir, 'functions', dir);
 
       await build({
