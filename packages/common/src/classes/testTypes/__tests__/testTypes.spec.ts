@@ -1,6 +1,7 @@
 import { TestTypeHelper } from '../testTypeHelper';
 import {
   ADR_TEST,
+  ANNUAL_WITH_CERTIFICATE,
   BASIC_IVA_TEST,
   HGV_TRL_RWT_TEST,
   IVA_TEST,
@@ -23,6 +24,10 @@ describe('validateTestTypeIdInList', () => {
       PROHIBITION_CLEARANCE_TEST,
       '70'
     );
+    const resultAnnualWithCertificate = TestTypeHelper.validateTestTypeIdInList(
+      ANNUAL_WITH_CERTIFICATE,
+      '1'
+    );
 
     expect(resultLEC).toBe(true);
     expect(resultADR).toBe(true);
@@ -32,6 +37,7 @@ describe('validateTestTypeIdInList', () => {
     expect(resultMSVA).toBe(true);
     expect(resultBasicIVA).toBe(true);
     expect(resultProhibitionClearance).toBe(true);
+    expect(resultAnnualWithCertificate).toBe(true);
   });
 
   it('should return false if test type id does not exist in list provided', () => {
@@ -46,6 +52,10 @@ describe('validateTestTypeIdInList', () => {
       PROHIBITION_CLEARANCE_TEST,
       '0'
     );
+    const resultAnnualWithCertificate = TestTypeHelper.validateTestTypeIdInList(
+      ANNUAL_WITH_CERTIFICATE,
+      '0'
+    );
 
     expect(resultLEC).toBe(false);
     expect(resultADR).toBe(false);
@@ -55,6 +65,7 @@ describe('validateTestTypeIdInList', () => {
     expect(resultMSVA).toBe(false);
     expect(resultBasicIVA).toBe(false);
     expect(resultProhibitionClearance).toBe(false);
+    expect(resultAnnualWithCertificate).toBe(false);
   });
 });
 
