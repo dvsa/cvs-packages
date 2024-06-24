@@ -1,4 +1,4 @@
-import { TestTypes } from '../testTypes';
+import { TestTypeHelper } from '../testTypeHelper';
 import {
   ADR_TEST,
   BASIC_IVA_TEST,
@@ -12,14 +12,14 @@ import {
 
 describe('validateTestTypeIdInList', () => {
   it('should return true if test type id exists in list provided', () => {
-    const resultLEC = TestTypes.validateTestTypeIdInList(LEC_TEST, '39');
-    const resultADR = TestTypes.validateTestTypeIdInList(ADR_TEST, '50');
-    const resultTIR = TestTypes.validateTestTypeIdInList(TIR_TEST, '49');
-    const resultRWT = TestTypes.validateTestTypeIdInList(HGV_TRL_RWT_TEST, '62');
-    const resultIVA = TestTypes.validateTestTypeIdInList(IVA_TEST, '125');
-    const resultMSVA = TestTypes.validateTestTypeIdInList(MSVA_TEST, '133');
-    const resultBasicIVA = TestTypes.validateTestTypeIdInList(BASIC_IVA_TEST, '125');
-    const resultProhibitionClearance = TestTypes.validateTestTypeIdInList(
+    const resultLEC = TestTypeHelper.validateTestTypeIdInList(LEC_TEST, '39');
+    const resultADR = TestTypeHelper.validateTestTypeIdInList(ADR_TEST, '50');
+    const resultTIR = TestTypeHelper.validateTestTypeIdInList(TIR_TEST, '49');
+    const resultRWT = TestTypeHelper.validateTestTypeIdInList(HGV_TRL_RWT_TEST, '62');
+    const resultIVA = TestTypeHelper.validateTestTypeIdInList(IVA_TEST, '125');
+    const resultMSVA = TestTypeHelper.validateTestTypeIdInList(MSVA_TEST, '133');
+    const resultBasicIVA = TestTypeHelper.validateTestTypeIdInList(BASIC_IVA_TEST, '125');
+    const resultProhibitionClearance = TestTypeHelper.validateTestTypeIdInList(
       PROHIBITION_CLEARANCE_TEST,
       '70'
     );
@@ -35,14 +35,14 @@ describe('validateTestTypeIdInList', () => {
   });
 
   it('should return false if test type id does not exist in list provided', () => {
-    const resultLEC = TestTypes.validateTestTypeIdInList(LEC_TEST, '0');
-    const resultADR = TestTypes.validateTestTypeIdInList(ADR_TEST, '0');
-    const resultTIR = TestTypes.validateTestTypeIdInList(TIR_TEST, '0');
-    const resultRWT = TestTypes.validateTestTypeIdInList(HGV_TRL_RWT_TEST, '0');
-    const resultIVA = TestTypes.validateTestTypeIdInList(IVA_TEST, '0');
-    const resultMSVA = TestTypes.validateTestTypeIdInList(MSVA_TEST, '0');
-    const resultBasicIVA = TestTypes.validateTestTypeIdInList(BASIC_IVA_TEST, '0');
-    const resultProhibitionClearance = TestTypes.validateTestTypeIdInList(
+    const resultLEC = TestTypeHelper.validateTestTypeIdInList(LEC_TEST, '0');
+    const resultADR = TestTypeHelper.validateTestTypeIdInList(ADR_TEST, '0');
+    const resultTIR = TestTypeHelper.validateTestTypeIdInList(TIR_TEST, '0');
+    const resultRWT = TestTypeHelper.validateTestTypeIdInList(HGV_TRL_RWT_TEST, '0');
+    const resultIVA = TestTypeHelper.validateTestTypeIdInList(IVA_TEST, '0');
+    const resultMSVA = TestTypeHelper.validateTestTypeIdInList(MSVA_TEST, '0');
+    const resultBasicIVA = TestTypeHelper.validateTestTypeIdInList(BASIC_IVA_TEST, '0');
+    const resultProhibitionClearance = TestTypeHelper.validateTestTypeIdInList(
       PROHIBITION_CLEARANCE_TEST,
       '0'
     );
@@ -60,13 +60,19 @@ describe('validateTestTypeIdInList', () => {
 
 describe('validateTestTypeIdInLists', () => {
   it('should return true if test type id exists in any of the list provided', () => {
-    const isVehicleApprovalTest = TestTypes.validateTestTypeIdInLists([IVA_TEST, MSVA_TEST], '125');
+    const isVehicleApprovalTest = TestTypeHelper.validateTestTypeIdInLists(
+      [IVA_TEST, MSVA_TEST],
+      '125'
+    );
 
     expect(isVehicleApprovalTest).toBe(true);
   });
 
   it('should return false if test type id does not exist in any of the lists provided', () => {
-    const isVehicleApprovalTest = TestTypes.validateTestTypeIdInLists([IVA_TEST, MSVA_TEST], '0');
+    const isVehicleApprovalTest = TestTypeHelper.validateTestTypeIdInLists(
+      [IVA_TEST, MSVA_TEST],
+      '0'
+    );
 
     expect(isVehicleApprovalTest).toBe(false);
   });

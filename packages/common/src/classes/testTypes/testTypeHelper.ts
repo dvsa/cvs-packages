@@ -1,9 +1,9 @@
 import { ITestTypeList } from './ITestTypeList';
 
 /**
- * Class to allow access to test type helper functions
+ * Class containing test type helper functions
  */
-export class TestTypes {
+export class TestTypeHelper {
   /**
    * Helper function to validate a test type id exists in a specific test type list
    * @param testTypeList - list of test type ids
@@ -14,7 +14,7 @@ export class TestTypes {
   }
 
   /**
-   * Helper function to validate a test type id exists in one of the test type lists
+   * Helper function to validate a test type id exists in one of many test type lists
    * @param testTypeLists - array containing lists of test type ids
    * @param testTypeId - test type id which is being tested
    */
