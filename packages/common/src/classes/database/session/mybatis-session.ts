@@ -1,6 +1,6 @@
-import { Connection } from 'mysql2/promise';
-import { ClassConstructor, plainToInstance } from 'class-transformer';
-import MyBatis, { Params } from 'mybatis-mapper';
+import { type Connection } from 'mysql2/promise';
+import { type ClassConstructor, plainToInstance } from 'class-transformer';
+import MyBatis, { type Params } from 'mybatis-mapper';
 
 export class MyBatisSession {
   /**
