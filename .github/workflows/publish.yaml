@@ -65,12 +65,12 @@ jobs:
           files: |
             packages/aws-utils/**        
 
-      - name: Check for `/packages/database-operations` changes
+      - name: Check for `/packages/database` changes
         uses: tj-actions/changed-files@v44
         id: changed-database-operations
         with:
           files: |
-            packages/database-operations/**
+            packages/database/**
 
   publish-common:
     needs: orchestrator
