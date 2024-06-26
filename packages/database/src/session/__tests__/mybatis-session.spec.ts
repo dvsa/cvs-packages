@@ -1,7 +1,7 @@
 import { plainToInstance } from 'class-transformer';
 import { MyBatisSession } from '../mybatis-session';
-import MySQL, { Connection } from 'mysql2/promise';
-import MyBatis from 'mybatis-mapper';
+import { Connection, createConnection } from 'mysql2/promise';
+import * as MyBatis from 'mybatis-mapper';
 
 jest.mock('mysql2/promise', () => ({
   createConnection: jest.fn().mockResolvedValue({
@@ -24,7 +24,7 @@ describe('MyBatisSession', () => {
   let mockConnection: Connection;
 
   beforeEach(async () => {
-    mockConnection = await MySQL.createConnection({});
+    mockConnection = await createConnection({});
     mockSession = new MyBatisSession(mockConnection, 'testNamespace', ['path/to/mapper'], false);
   });
 
