@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "@aws-sdk/client-appconfigdata": "^3.588.0",
-    "@smithy/util-stream": "^3.0.1",
+    "@smithy/util-stream": "^3.0.5",
     "@types/aws-lambda": "^8.10.131",
     "@types/jest": "^29.5.11",
     "@types/lodash.merge": "^4.6.9",
