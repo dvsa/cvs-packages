@@ -6,7 +6,6 @@ import {
 import { DynamoDBDocumentClient, ScanCommand, type ScanCommandInput } from '@aws-sdk/lib-dynamodb';
 import { fromEnv, fromIni } from '@aws-sdk/credential-providers';
 import { captureAWSv3Client } from 'aws-xray-sdk';
-import * as AWSxRay from 'aws-xray-sdk';
 
 export class DynamoDb {
   private static readonly defaultConfig: Partial<DynamoDBClientConfig> = {
@@ -35,10 +34,10 @@ export class DynamoDb {
 
     // If tracing is enabled, then capture the client with AWS X-Ray
     const client = process.env._X_AMZN_TRACE_ID
-      ? AWSxRay.captureAWSv3Client(new DynamoDBClient(clientConfig))
+      ? captureAWSv3Client(new DynamoDBClient(clientConfig))
       : new DynamoDBClient(clientConfig);
 
-    return DynamoDBDocumentClient.from(captureAWSv3Client(client));
+    return DynamoDBDocumentClient.from(client);
   }
 
   /**
