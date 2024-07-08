@@ -33,7 +33,7 @@ describe('MyBatisSession', () => {
   });
 
   test('select executes a query and returns results', async () => {
-    const results = await mockSession.select('testMapper', {});
+    const results = await mockSession.query('testMapper', {});
     expect(MyBatis.getStatement).toHaveBeenCalledWith(
       'testNamespace',
       'testMapper',
@@ -50,7 +50,7 @@ describe('MyBatisSession', () => {
     });
 
     try {
-      await mockSession.select('testMapper', {});
+      await mockSession.query('testMapper', {});
     } catch (err) {
       expect(mockConnection.query).not.toHaveBeenCalled();
       expect(err).toEqual({
@@ -66,7 +66,7 @@ describe('MyBatisSession', () => {
 
     const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 
-    const results = await mockSession.select('testMapper', {});
+    const results = await mockSession.query('testMapper', {});
     expect(MyBatis.getStatement).toHaveBeenCalledWith(
       'testNamespace',
       'testMapper',
@@ -94,10 +94,10 @@ describe('MyBatisSession', () => {
 
   test('selectList maps rows to instances of the model', async () => {
     const mockResults = [{ id: 1, name: 'Test' }];
-    jest.spyOn(mockSession, 'select').mockResolvedValue(mockResults);
+    jest.spyOn(mockSession, 'query').mockResolvedValue(mockResults);
 
     const results = await mockSession.selectList('testMapper', {}, class {});
-    expect(mockSession.select).toHaveBeenCalledWith('testMapper', {});
+    expect(mockSession.query).toHaveBeenCalledWith('testMapper', {});
     expect(plainToInstance).toHaveBeenCalledTimes(mockResults.length);
     expect(results).toEqual(mockResults);
   });

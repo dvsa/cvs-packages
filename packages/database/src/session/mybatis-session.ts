@@ -1,6 +1,6 @@
-import { type Connection } from 'mysql2/promise';
-import { type ClassConstructor, plainToInstance } from 'class-transformer';
-import MyBatis, { type Params } from 'mybatis-mapper';
+import { Connection } from 'mysql2/promise';
+import { ClassConstructor, plainToInstance } from 'class-transformer';
+import MyBatis, { Params } from 'mybatis-mapper';
 
 export class MyBatisSession {
   /**
@@ -25,7 +25,7 @@ export class MyBatisSession {
    * @param {Params} params - Query parameters
    * @return {Promise<unknown[]>}
    */
-  async select(mapperId: string, params: Params): Promise<unknown[]> {
+  async query<T>(mapperId: string, params: Params): Promise<T> {
     let query: string = '';
 
     try {
@@ -48,7 +48,7 @@ export class MyBatisSession {
 
     const [rows] = await this.connection.query(query);
 
-    return rows as unknown[];
+    return rows as T;
   }
 
   /**
@@ -77,7 +77,7 @@ export class MyBatisSession {
    * @return {Promise<T[]>}
    */
   async selectList<T>(mapperId: string, params: Params, model: ClassConstructor<T>): Promise<T[]> {
-    const rows = await this.select(mapperId, params);
+    const rows = await this.query<unknown[]>(mapperId, params);
     return rows.map((row) => plainToInstance(model, row));
   }
 
