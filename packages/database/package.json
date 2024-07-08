@@ -1,6 +1,6 @@
 {
   "name": "@dvsa/database-helpers",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Common package to be used for database operations",
   "author": "DVSA",
   "license": "ISC",
@@ -29,6 +29,7 @@
     "postpublish": "git clean -fd && npm run clean:temp"
   },
   "dependencies": {
+    "class-transformer": "^0.5.1",
     "mybatis-mapper": "^0.8.0",
     "mysql2": "^3.10.1"
   },
