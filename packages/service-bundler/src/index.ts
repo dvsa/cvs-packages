@@ -275,7 +275,7 @@ export class ServicePackager {
 
       const { size } = await stat(zipFile);
 
-      this.logger(`"${fn.name}" zipped successfully. Size: ${this.bytesToSize(size)} bytes.`, LogColour.Green);
+      this.logger(`"${fn.name}" zipped successfully. ~ Size: ${this.bytesToSize(size)}.`, LogColour.Green);
     }
 
     const proxyBundleDir = join(
@@ -300,7 +300,7 @@ export class ServicePackager {
 
       const { size } = await stat(zipFile);
 
-      this.logger(`API proxy zipped successfully. Size: ${this.bytesToSize(size)} bytes.`, LogColour.Green);
+      this.logger(`API proxy zipped successfully. ~ Size: ${this.bytesToSize(size)}.`, LogColour.Green);
     } catch {
       this.logger(`No API proxy to zip.`, LogColour.Yellow);
     }
