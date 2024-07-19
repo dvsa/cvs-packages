@@ -1,6 +1,6 @@
 {
   "name": "@dvsa/service-bundler",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "author": "DVSA",
   "license": "ISC",
   "scripts": {
@@ -19,7 +19,7 @@
     "postpublish": "git clean -fd && npm run clean:temp"
   },
   "dependencies": {
-    "esbuild": "^0.21.3",
+    "esbuild": "^0.23.0",
     "esbuild-plugin-typescript-decorators": "^0.1.0",
     "fs-extra": "^11.2.0",
     "zip-lib": "^1.0.4"
