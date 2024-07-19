@@ -4,6 +4,7 @@ import { build, BuildOptions } from 'esbuild';
 import { esbuildDecorators } from 'esbuild-plugin-typescript-decorators';
 import { Dirent } from 'node:fs';
 import { join } from 'node:path';
+import { stat } from 'node:fs/promises';
 import { archiveFolder } from 'zip-lib';
 
 enum LogColour {
@@ -268,10 +269,13 @@ export class ServicePackager {
         ? `${process.env.ZIP_NAME}-${fn.name}-${version}-${timestamp}`
         : `${fn.name}-${version}-${timestamp}`;
 
-      await archiveFolder(
-        `${functionBundlesDir}/${fn.name}`,
-        `${ServicePackager.config.artifactOutputDir}/${fnArtifactName}.zip`
-      );
+      const zipFile = `${ServicePackager.config.artifactOutputDir}/${fnArtifactName}.zip`;
+
+      await archiveFolder(`${functionBundlesDir}/${fn.name}`, zipFile);
+
+      const { size } = await stat(zipFile);
+
+      this.logger(`"${fn.name}" zipped successfully. Size: ${this.bytesToSize(size)} bytes.`, LogColour.Green);
     }
 
     const proxyBundleDir = join(
@@ -290,14 +294,38 @@ export class ServicePackager {
         ? `${process.env.ZIP_NAME}-${name}-${version}-${timestamp}`
         : `${name}-${version}-${timestamp}`;
 
-      await archiveFolder(
-        proxyBundleDir,
-        `${ServicePackager.config.artifactOutputDir}/${proxyArtifactName}.zip`
-      );
+      const zipFile = `${ServicePackager.config.artifactOutputDir}/${proxyArtifactName}.zip`;
+
+      await archiveFolder(proxyBundleDir, zipFile);
+
+      const { size } = await stat(zipFile);
+
+      this.logger(`API proxy zipped successfully. Size: ${this.bytesToSize(size)} bytes.`, LogColour.Green);
     } catch {
       this.logger(`No API proxy to zip.`, LogColour.Yellow);
     }
 
     this.logger(`Packaging complete.`, LogColour.Green);
+  }
+
+  /**
+   * Calculate the size of an artifact, in the most appropriate unit
+   * @param {number} bytes - number of bytes
+   * @private
+   */
+  private bytesToSize(bytes: number): string {
+    const sizes: string[] = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+
+    if (bytes === 0) {
+      return 'n/a';
+    }
+
+    const i: number = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)).toString());
+
+    if (i === 0) {
+      return `${bytes} ${sizes[i]}`;
+    }
+
+    return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${sizes[i]}`;
   }
 }
