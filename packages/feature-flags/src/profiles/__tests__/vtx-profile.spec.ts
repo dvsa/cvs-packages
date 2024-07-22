@@ -16,6 +16,7 @@ describe('app config configuration', () => {
 
     expect(flags.welshTranslation.enabled).toBe(false);
     expect(flags.welshTranslation.translatePassTestResult).toBe(false);
+    expect(flags.issueDocsCentrally.enabled).toBe(true);
   });
 
   it('should override some flags with a partial response', async () => {
@@ -23,6 +24,9 @@ describe('app config configuration', () => {
       welshTranslation: {
         enabled: true,
         translatePassTestResult: true,
+      },
+      issueDocsCentrally: {
+        enabled: false,
       },
     };
 
@@ -33,5 +37,6 @@ describe('app config configuration', () => {
     expect(flags.welshTranslation.enabled).toBe(true);
     expect(flags.welshTranslation.translatePassTestResult).toBe(true);
     expect(flags.welshTranslation.translateFailTestResult).toBe(false);
+    expect(flags.issueDocsCentrally.enabled).toBe(false);
   });
 });

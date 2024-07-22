@@ -9,6 +9,9 @@ const defaultFeatureFlags = {
     translateFailTestResult: false,
     translatePrsTestResult: false,
   },
+  issueDocsCentrally: {
+    enabled: true,
+  },
 };
 
 export type FeatureFlags = typeof defaultFeatureFlags;
