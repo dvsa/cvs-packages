@@ -4,13 +4,14 @@ Helper library for simplifying and standardising usage of AWS clients
 
 ### Pre-requisites
 
-- Node.js (Please see `.nvmrc` for specific version)
+- Node.js (Please see `.nvmrc` in the root of the repo for a specific version)
 - `npm` (If using [n](https://github.com/tj/n) or [nvm](https://github.com/nvm-sh/nvm), this will be automatically managed)
 - Security
   - [Git secrets](https://github.com/awslabs/git-secrets)
   - [ScanRepo](https://github.com/UKHomeOffice/repo-security-scanner)
     - Unzip `repo-security-scanner_<version>_Darwin_<architercture>.tar.gz` and rename the executable inside the folder
       to `scanrepo` - Add executable to path (using `echo $PATH` to find your path)
+---
 
 ### Getting started
 
@@ -18,11 +19,10 @@ Helper library for simplifying and standardising usage of AWS clients
 
 1. `npm install` (or `npm i`)
 
-###### The code that will be published lives inside the ./src directory.
-
-If wishing to add new top level directories to the output, then they must be included in the `files` array inside `package.json` as well as included in the `clean:temp` command.
-
+---
 ### Publishing
+
+###### The code that will be published lives inside the ./src directory.
 
 In order to see the output of what will be published, run the following command:
 
@@ -32,10 +32,16 @@ npm publish --dry-run
 
 There are two ways in which this package can/should be published:
 
+SHOULD:
 ###### Requires manual version bump via the PR
 
 - Upon merge into `main` branch, the package will be published via a GHA workflow.
 
+CAN:
+###### Requires manual version bump via the PR
+
+- If you are an authenticated member of the DVSA `npm` account, you can manually publish changes, although this is discouraged.
+---
 ### Using a package
 
 This suite of packages is intended to obfuscate logic in regards to offline running utilising `@aws-sdk/credentials-provider`. 
@@ -64,6 +70,8 @@ export class DataProvider {
 
     // or whatever you need to do
   }
+}
 ```
-
 By omitting `USE_CREDENTIALS` or it being set to `false`, the real resource will attempted to be interacted with. Therefore on AWS lambda, this should never be `true`!
+
+---
