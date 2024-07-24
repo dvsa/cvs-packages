@@ -2,6 +2,7 @@
   "name": "@dvsa/biome-config",
   "description": "Shareable Biome configuration",
   "version": "0.0.1",
+  "scripts": {},
   "author": "DVSA",
   "type": "module",
   "license": "ISC",
