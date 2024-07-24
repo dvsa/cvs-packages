@@ -2,7 +2,7 @@ import { TestTypeHelper } from '../testTypeHelper';
 import {
   ADR_TEST,
   ANNUAL_WITH_CERTIFICATE,
-  BASIC_IVA_TEST,
+  BASIC_IVA_TEST, CENTRAL_DOCS_TEST_TYPES,
   HGV_TRL_RWT_TEST,
   IVA_TEST,
   LEC_TEST,
@@ -28,6 +28,10 @@ describe('validateTestTypeIdInList', () => {
       ANNUAL_WITH_CERTIFICATE,
       '1'
     );
+    const centralDocsTestType = TestTypeHelper.validateTestTypeIdInList(
+      CENTRAL_DOCS_TEST_TYPES,
+      '50'
+    );
 
     expect(resultLEC).toBe(true);
     expect(resultADR).toBe(true);
@@ -38,6 +42,7 @@ describe('validateTestTypeIdInList', () => {
     expect(resultBasicIVA).toBe(true);
     expect(resultProhibitionClearance).toBe(true);
     expect(resultAnnualWithCertificate).toBe(true);
+    expect(centralDocsTestType).toBe(true);
   });
 
   it('should return false if test type id does not exist in list provided', () => {
