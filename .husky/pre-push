@@ -1,1 +1,1 @@
-npm run lint --ws && npm run test --ws && npm run gitSecrets --ws
+npm run lint --if-present --ws && npm run test --if-present --ws && npm run gitSecrets --if-present --ws

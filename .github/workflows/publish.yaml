@@ -31,6 +31,7 @@ jobs:
       publish-service-bundler: ${{ steps.changed-service-bundler.outputs.any_changed == 'true' || null }}
       publish-aws-utils: ${{ steps.changed-aws-utils.outputs.any_changed == 'true' || null }}
       publish-database-operations: ${{ steps.changed-database-operations.outputs.any_changed == 'true' || null }}
+      publish-biome-config: ${{ steps.changed-biome-config.outputs.any_changed == 'true' || null }}
     steps:
       - name: 📨 Checkout
         uses: actions/checkout@v4
@@ -71,6 +72,13 @@ jobs:
         with:
           files: |
             packages/database/**
+
+      - name: Check for `/packages/biome-config` changes
+        uses: tj-actions/changed-files@v44
+        id: changed-biome-config
+        with:
+          files: |
+            packages/biome-config/**      
 
   publish-common:
     needs: orchestrator
@@ -136,6 +144,21 @@ jobs:
     needs: orchestrator
     runs-on: ubuntu-latest
     if: ${{ needs.orchestrator.outputs.publish-database-operations || github.event_name == 'workflow_dispatch' && inputs.package == 'database' }}
+    steps:
+      - name: 📨 Checkout
+        uses: actions/checkout@v4
+
+      - name: Publish package "packages/database" ${{ inputs.dry-run && 'in' || 'not in' }} dry run mode
+        uses: ./.github/actions/publish-package
+        with:
+          dry-run: ${{ inputs.dry-run && 'true' || 'false' }}
+          package-path: 'packages/database'
+          token: ${{ secrets.NPM_AUTH_TOKEN }}
+
+  publish-biome-config:
+    needs: orchestrator
+    runs-on: ubuntu-latest
+    if: ${{ needs.orchestrator.outputs.publish-biome-config || github.event_name == 'workflow_dispatch' && inputs.package == 'database' }}
     steps:
       - name: 📨 Checkout
         uses: actions/checkout@v4
