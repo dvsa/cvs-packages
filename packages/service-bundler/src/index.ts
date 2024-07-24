@@ -1,11 +1,9 @@
-import { existsSync, readdirSync } from 'fs';
 import { copy } from 'fs-extra';
-import { build, BuildOptions } from 'esbuild';
-import { esbuildDecorators } from 'esbuild-plugin-typescript-decorators';
-import { Dirent } from 'node:fs';
-import { join } from 'node:path';
+import { type BuildConfig, build } from 'bun';
+import { createWriteStream, type Dirent, existsSync, readdirSync } from 'node:fs';
 import { stat } from 'node:fs/promises';
-import { archiveFolder } from 'zip-lib';
+import { join } from 'node:path';
+import archiver from 'archiver';
 
 enum LogColour {
   Cyan = '36',
@@ -17,7 +15,7 @@ enum LogColour {
 type CustomBuildOptions = {
   /**
    * Only TS is compiled, therefore if non-TS files are needed at runtime e.g. XML / YAML, they must be copied into the bundle.
-   * A glob should be provided for the input and the location to output.
+   * e.g. [{ from: 'src/domain/mappers', to: 'dist/mappers' }].
    */
   copyFiles?: CopyFilesOptions[];
   /**
@@ -59,17 +57,13 @@ type Config = {
 
 type ServicePackagerOptions = {
   /**
-   * Required by `esbuild` to determine the target node version.
-   */
-  nodeMajorVersion: string;
-  /**
    * Optional proxy details to be used in artifact creation.
    */
   proxy?: ProxyDetails;
   /**
-   * Optional esbuild options to override the core build options.
+   * Optional build options to override the core build options.
    */
-  esbuildOptions?: BuildOptions;
+  buildOptions?: BuildConfig;
   /**
    * Optional configuration options.
    */
@@ -85,14 +79,11 @@ export class ServicePackager {
   private static handlerFileName: string;
   private static proxyDetails: ProxyDetails;
   private static config: Config;
-  private static readonly coreBuildOptions: BuildOptions = {
-    bundle: true,
+  private static readonly coreBuildOptions: Partial<BuildConfig> = {
     minify: true,
-    sourcemap: process.argv.includes('--source-map'),
-    logLevel: 'info',
-    platform: 'node',
+    sourcemap: process.argv.includes('--source-map') ? 'inline' : 'none',
+    target: 'node',
     external: ['@koa/*', '@babel/*'],
-    plugins: [esbuildDecorators()],
   };
 
   /**
@@ -103,8 +94,7 @@ export class ServicePackager {
     // Merge the core build options with the provided options (if any).
     // This allows for no config to be passed, but also the ability to override.
     Object.assign(ServicePackager.coreBuildOptions, {
-      target: `node${servicePackagerOptions.nodeMajorVersion}`,
-      ...(servicePackagerOptions.esbuildOptions || {}),
+      ...(servicePackagerOptions.buildOptions || {}),
     });
 
     // Set the static properties using defaults or provided options
@@ -130,7 +120,7 @@ export class ServicePackager {
     console.log(`\x1b[${colour}m%s\x1b[0m`, `\n${msg}`);
 
   /**
-   * Copy any non-transpiled i.e. TS files into the build output
+   * Copy any non-transpiled i.e. non TS files into the build output
    * @param {CopyFilesOptions} opts
    * @param {Config} config
    * @private
@@ -153,7 +143,7 @@ export class ServicePackager {
   }
 
   /**
-   * Build the API proxy using `esbuild`
+   * Build the API proxy
    * @private
    */
   private async buildAPIProxy() {
@@ -168,8 +158,8 @@ export class ServicePackager {
     }
 
     await build({
-      entryPoints: ['src/proxy/index.ts'],
-      outfile: `${ServicePackager.config.buildOutputDir}/src/proxy/index.js`,
+      entrypoints: ['src/proxy/index.ts'],
+      outdir: `${ServicePackager.config.buildOutputDir}/src/proxy`,
       ...ServicePackager.coreBuildOptions,
     });
 
@@ -177,7 +167,7 @@ export class ServicePackager {
   }
 
   /**
-   * Build the lambda functions using `esbuild`
+   * Build the lambda functions
    * @private
    */
   private async buildFunctions() {
@@ -201,10 +191,9 @@ export class ServicePackager {
       const outdir = join(process.cwd(), ServicePackager.config.buildOutputDir, 'functions', dir);
 
       await build({
-        entryPoints: [{ in: entryPoint, out: 'index' }],
-        outdir,
         ...ServicePackager.coreBuildOptions,
-
+        entrypoints: [entryPoint],
+        outdir,
         // exclude the packages needed for the API proxying
         external: ['cors', 'express', 'routing-controllers', 'serverless-http'],
       });
@@ -271,7 +260,7 @@ export class ServicePackager {
 
       const zipFile = `${ServicePackager.config.artifactOutputDir}/${fnArtifactName}.zip`;
 
-      await archiveFolder(`${functionBundlesDir}/${fn.name}`, zipFile);
+      await this.archiveFolder(`${functionBundlesDir}/${fn.name}`, zipFile);
 
       const { size } = await stat(zipFile);
 
@@ -296,7 +285,7 @@ export class ServicePackager {
 
       const zipFile = `${ServicePackager.config.artifactOutputDir}/${proxyArtifactName}.zip`;
 
-      await archiveFolder(proxyBundleDir, zipFile);
+      await this.archiveFolder(proxyBundleDir, zipFile);
 
       const { size } = await stat(zipFile);
 
@@ -306,6 +295,21 @@ export class ServicePackager {
     }
 
     this.logger(`Packaging complete.`, LogColour.Green);
+  }
+
+  private async archiveFolder(sourceDir: string, outPath: string) {
+    const output = createWriteStream(outPath);
+
+    const archive = archiver('zip', { zlib: { level: 9 } });
+
+    return new Promise((resolve, reject) => {
+      output.on('close', resolve);
+      archive.on('error', reject);
+
+      archive.pipe(output);
+      archive.directory(sourceDir, false);
+      archive.finalize();
+    });
   }
 
   /**
