@@ -28,7 +28,7 @@ describe('validateTestTypeIdInList', () => {
       ANNUAL_WITH_CERTIFICATE,
       '1'
     );
-    const centralDocsTestType = TestTypeHelper.validateTestTypeIdInList(
+    const resultCentralDocs = TestTypeHelper.validateTestTypeIdInList(
       CENTRAL_DOCS_TEST,
       '50'
     );
@@ -42,7 +42,7 @@ describe('validateTestTypeIdInList', () => {
     expect(resultBasicIVA).toBe(true);
     expect(resultProhibitionClearance).toBe(true);
     expect(resultAnnualWithCertificate).toBe(true);
-    expect(centralDocsTestType).toBe(true);
+    expect(resultCentralDocs).toBe(true);
   });
 
   it('should return false if test type id does not exist in list provided', () => {
