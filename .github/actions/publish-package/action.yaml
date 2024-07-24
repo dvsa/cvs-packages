@@ -43,12 +43,12 @@ runs:
       working-directory: ${{ inputs.package-path }}
 
     - name: ⚒️ Build package
-      run: npm run build
+      run: npm run build --if-present
       shell: bash
       working-directory: ${{ inputs.package-path }}
 
     - name: 🧪️ Unit test
-      run: npm run test:coverage
+      run: npm run test:coverage --if-present
       shell: bash
       working-directory: ${{ inputs.package-path }}
 

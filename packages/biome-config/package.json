@@ -1,0 +1,14 @@
+{
+  "name": "@dvsa/biome-config",
+  "description": "Shareable Biome configuration",
+  "version": "0.0.1",
+  "author": "DVSA",
+  "license": "ISC",
+  "exports": {
+    "./biome": "./src/config.json"
+  },
+  "keywords": [
+    "biome",
+    "typescript"
+  ]
+}
