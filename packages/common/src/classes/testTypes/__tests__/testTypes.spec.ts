@@ -2,7 +2,7 @@ import { TestTypeHelper } from '../testTypeHelper';
 import {
   ADR_TEST,
   ANNUAL_WITH_CERTIFICATE,
-  BASIC_IVA_TEST, CENTRAL_DOCS_TEST_TYPES,
+  BASIC_IVA_TEST, CENTRAL_DOCS_TEST,
   HGV_TRL_RWT_TEST,
   IVA_TEST,
   LEC_TEST,
@@ -29,7 +29,7 @@ describe('validateTestTypeIdInList', () => {
       '1'
     );
     const centralDocsTestType = TestTypeHelper.validateTestTypeIdInList(
-      CENTRAL_DOCS_TEST_TYPES,
+      CENTRAL_DOCS_TEST,
       '50'
     );
 

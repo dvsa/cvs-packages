@@ -155,7 +155,7 @@ export const ANNUAL_WITH_CERTIFICATE: ITestTypeList = {
   ],
 };
 
-export const CENTRAL_DOCS_TEST_TYPES = {
+export const CENTRAL_DOCS_TEST = {
   IDS: [
     '39',
     '44',
