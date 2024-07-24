@@ -3,6 +3,7 @@
   "description": "Shareable Biome configuration",
   "version": "0.0.1",
   "author": "DVSA",
+  "type": "module",
   "license": "ISC",
   "exports": {
     "./biome": "./src/config.json"
