@@ -30,8 +30,10 @@
         "useImportType": "off"
       },
       "complexity": {
-        "noStaticOnlyClass": "off",
-        "noUnusedImports": "error"
+        "noStaticOnlyClass": "off"
+      },
+      "correctness": {
+        "noUnusedVariables": "off"
       }
     },
     "ignore": [
