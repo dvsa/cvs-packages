@@ -17,6 +17,7 @@ on:
           - 'service-bundler'
           - 'aws-utils'
           - 'database'
+          - 'biome-config'
   push:
     branches:
       - main
@@ -158,14 +159,14 @@ jobs:
   publish-biome-config:
     needs: orchestrator
     runs-on: ubuntu-latest
-    if: ${{ needs.orchestrator.outputs.publish-biome-config || github.event_name == 'workflow_dispatch' && inputs.package == 'database' }}
+    if: ${{ needs.orchestrator.outputs.publish-biome-config || github.event_name == 'workflow_dispatch' && inputs.package == 'biome-config' }}
     steps:
       - name: 📨 Checkout
         uses: actions/checkout@v4
 
-      - name: Publish package "packages/database" ${{ inputs.dry-run && 'in' || 'not in' }} dry run mode
+      - name: Publish package "packages/biome-config" ${{ inputs.dry-run && 'in' || 'not in' }} dry run mode
         uses: ./.github/actions/publish-package
         with:
           dry-run: ${{ inputs.dry-run && 'true' || 'false' }}
-          package-path: 'packages/database'
+          package-path: 'packages/biome-config'
           token: ${{ secrets.NPM_AUTH_TOKEN }}
