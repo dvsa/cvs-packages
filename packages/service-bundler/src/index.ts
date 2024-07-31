@@ -4,6 +4,7 @@ import { createWriteStream, type Dirent, existsSync, readdirSync } from 'node:fs
 import { stat } from 'node:fs/promises';
 import { join } from 'node:path';
 import archiver from 'archiver';
+import { archiveFolder as archiverFolderCJS } from 'zip-lib';
 
 enum LogColour {
   Cyan = '36',
@@ -61,6 +62,10 @@ type ServicePackagerOptions = {
    */
   proxy?: ProxyDetails;
   /**
+   * The distribution type for the service.
+   */
+  distribution: 'esm' | 'cjs';
+  /**
    * Optional build options to override the core build options.
    */
   buildOptions?: BuildConfig;
@@ -77,6 +82,7 @@ type ServicePackagerOptions = {
 
 export class ServicePackager {
   private static handlerFileName: string;
+  private static distribution: string;
   private static proxyDetails: ProxyDetails;
   private static config: Config;
   private static readonly coreBuildOptions: Partial<BuildConfig> = {
@@ -109,6 +115,7 @@ export class ServicePackager {
     };
 
     ServicePackager.handlerFileName = servicePackagerOptions.handlerFileName || 'handler.ts';
+    ServicePackager.distribution = servicePackagerOptions.distribution || 'cjs';
   }
 
   /**
@@ -143,7 +150,45 @@ export class ServicePackager {
   }
 
   /**
-   * Build the API proxy
+   * Internal function to archive a folder using `archiver` for ESM distribution
+   * @param {string} sourceDir
+   * @param {string} outPath
+   * @private
+   */
+  private async archiveFolderESM(sourceDir: string, outPath: string) {
+    const output = createWriteStream(outPath);
+
+    const archive = archiver('zip', { zlib: { level: 9 } });
+
+    return new Promise((resolve, reject) => {
+      output.on('close', resolve);
+      archive.on('error', reject);
+
+      archive.pipe(output);
+      archive.directory(sourceDir, false);
+      archive.finalize();
+    });
+  }
+
+  /**
+   * Archive a folder with set distribution type
+   * @param {sourceDir} sourceDir
+   * @param {outPath} outPath
+   * @private
+   */
+  private async archive(sourceDir: string, outPath: string) {
+    switch (ServicePackager.distribution.toLowerCase()) {
+      case 'esm':
+        return this.archiveFolderESM(sourceDir, outPath);
+      case 'cjs':
+        return archiverFolderCJS(sourceDir, outPath);
+      default:
+        throw new Error(`Invalid distribution type: "${ServicePackager.distribution}".`);
+    }
+  }
+
+  /**
+   * Build the API proxy using `esbuild`
    * @private
    */
   private async buildAPIProxy() {
@@ -260,7 +305,7 @@ export class ServicePackager {
 
       const zipFile = `${ServicePackager.config.artifactOutputDir}/${fnArtifactName}.zip`;
 
-      await this.archiveFolder(`${functionBundlesDir}/${fn.name}`, zipFile);
+      await this.archive(`${functionBundlesDir}/${fn.name}`, zipFile);
 
       const { size } = await stat(zipFile);
 
@@ -285,7 +330,7 @@ export class ServicePackager {
 
       const zipFile = `${ServicePackager.config.artifactOutputDir}/${proxyArtifactName}.zip`;
 
-      await this.archiveFolder(proxyBundleDir, zipFile);
+      await this.archive(proxyBundleDir, zipFile);
 
       const { size } = await stat(zipFile);
 
@@ -295,21 +340,6 @@ export class ServicePackager {
     }
 
     this.logger(`Packaging complete.`, LogColour.Green);
-  }
-
-  private async archiveFolder(sourceDir: string, outPath: string) {
-    const output = createWriteStream(outPath);
-
-    const archive = archiver('zip', { zlib: { level: 9 } });
-
-    return new Promise((resolve, reject) => {
-      output.on('close', resolve);
-      archive.on('error', reject);
-
-      archive.pipe(output);
-      archive.directory(sourceDir, false);
-      archive.finalize();
-    });
   }
 
   /**
