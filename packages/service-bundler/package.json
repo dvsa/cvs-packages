@@ -19,7 +19,6 @@
     "postpublish": "git clean -fd && npm run clean:temp"
   },
   "dependencies": {
-    "@types/bun": "^1.1.6",
     "archiver": "^7.0.1",
     "esbuild": "^0.23.0",
     "esbuild-plugin-typescript-decorators": "^0.1.0",
@@ -28,6 +27,7 @@
   },
   "devDependencies": {
     "@types/archiver": "^6.0.2",
+    "@types/bun": "^1.1.6",
     "@types/fs-extra": "^11.0.4",
     "@types/jest": "^29.5.11",
     "@types/node": "^20.13.0",
