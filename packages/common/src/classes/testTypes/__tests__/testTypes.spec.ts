@@ -2,7 +2,8 @@ import { TestTypeHelper } from '../testTypeHelper';
 import {
   ADR_TEST,
   ANNUAL_WITH_CERTIFICATE,
-  BASIC_IVA_TEST, CENTRAL_DOCS_TEST,
+  BASIC_IVA_TEST,
+  CENTRAL_DOCS_TEST,
   HGV_TRL_RWT_TEST,
   IVA_TEST,
   LEC_TEST,
@@ -28,10 +29,7 @@ describe('validateTestTypeIdInList', () => {
       ANNUAL_WITH_CERTIFICATE,
       '1'
     );
-    const resultCentralDocs = TestTypeHelper.validateTestTypeIdInList(
-      CENTRAL_DOCS_TEST,
-      '50'
-    );
+    const resultCentralDocs = TestTypeHelper.validateTestTypeIdInList(CENTRAL_DOCS_TEST, '50');
 
     expect(resultLEC).toBe(true);
     expect(resultADR).toBe(true);
@@ -61,6 +59,7 @@ describe('validateTestTypeIdInList', () => {
       ANNUAL_WITH_CERTIFICATE,
       '0'
     );
+    const resultCentralDocs = TestTypeHelper.validateTestTypeIdInList(CENTRAL_DOCS_TEST, '0');
 
     expect(resultLEC).toBe(false);
     expect(resultADR).toBe(false);
@@ -71,6 +70,7 @@ describe('validateTestTypeIdInList', () => {
     expect(resultBasicIVA).toBe(false);
     expect(resultProhibitionClearance).toBe(false);
     expect(resultAnnualWithCertificate).toBe(false);
+    expect(resultCentralDocs).toBe(false);
   });
 });
 
