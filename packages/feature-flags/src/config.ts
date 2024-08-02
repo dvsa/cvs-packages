@@ -2,7 +2,7 @@ interface IFeatureFlagsConfig {
   environment: string;
   application: string;
   maxAge: number;
-  requestTimeout: number
+  requestTimeout: number;
 }
 
 declare let process: {

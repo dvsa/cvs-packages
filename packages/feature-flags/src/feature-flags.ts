@@ -8,15 +8,12 @@ import { FeatureFlagsClientName } from './';
 
 class FeatureFlagsClient {
   async get<T>(clientName: FeatureFlagsClientName): Promise<T> {
-
     const featureFlags = await getAppConfig(`${clientName}-profile`, {
       ...defaultFeatureFlagConfig,
       transform: 'json',
     });
 
-
     return featureFlags as T;
-
   }
 }
 
