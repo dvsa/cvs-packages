@@ -7,6 +7,6 @@ const defaultFeatureFlags = {};
 export type FeatureFlags = typeof defaultFeatureFlags;
 
 export const getProfile = async () => {
-  const flags = await getFeatureFlags<FeatureFlags>(FeatureFlagsClientName.VTM);
-  return merge(defaultFeatureFlags, flags);
+	const flags = await getFeatureFlags<FeatureFlags>(FeatureFlagsClientName.VTM);
+	return merge(defaultFeatureFlags, flags);
 };
