@@ -1,6 +1,6 @@
 {
   "name": "@dvsa/database-helpers",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Common package to be used for database operations",
   "author": "DVSA",
   "license": "ISC",
@@ -30,7 +30,7 @@
   "dependencies": {
     "class-transformer": "^0.5.1",
     "mybatis-mapper": "^0.8.0",
-    "mysql2": "^3.10.1"
+    "mysql2": "^3.11.0"
   },
   "devDependencies": {
     "@biomejs/biome": "1.8.3",
