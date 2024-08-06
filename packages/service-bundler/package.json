@@ -1,6 +1,6 @@
 {
   "name": "@dvsa/service-bundler",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "DVSA",
   "license": "ISC",
   "scripts": {
@@ -9,8 +9,8 @@
     "clean:temp": "rimraf api classes response",
     "format": "prettier . --write",
     "gitSecrets": "git secrets --scan && git log -p | scanrepo",
-    "lint": "eslint src --ext .ts",
-    "lint:fix": "eslint src --ext .ts --fix",
+    "lint": "biome check src",
+    "lint:fix": "npm run lint -- --write",
     "prepare": "husky",
     "test": "echo \"*** Tests to be added\"",
     "test:coverage": "echo \"*** Tests to be added\"",
@@ -25,19 +25,16 @@
     "zip-lib": "^1.0.4"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.8.3",
+    "@dvsa/biome-config": "0.1.0",
     "@types/fs-extra": "^11.0.4",
     "@types/jest": "^29.5.11",
     "@types/node": "^20.13.0",
-    "@typescript-eslint/eslint-plugin": "^7.9.0",
-    "@typescript-eslint/parser": "^7.9.0",
-    "eslint": "^8.56.0",
-    "eslint-plugin-import": "^2.29.1",
-    "husky": "^9.0.2",
+    "husky": "^9.1.4",
     "jest": "^29.7.0",
     "lint-staged": "^15.2.0",
-    "prettier": "^3.3.0",
     "rimraf": "^5.0.5",
-    "ts-jest": "^29.1.2",
+    "ts-jest": "^29.2.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   }

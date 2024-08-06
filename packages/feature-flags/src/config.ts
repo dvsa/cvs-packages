@@ -1,17 +1,17 @@
 interface IFeatureFlagsConfig {
-  environment: string;
-  application: string;
-  maxAge: number;
-  requestTimeout: number;
+	environment: string;
+	application: string;
+	maxAge: number;
+	requestTimeout: number;
 }
 
 declare let process: {
-  env: {
-    BRANCH: string;
-    FEATURE_FLAGS_APP_NAME: string;
-    FEATURE_FLAGS_MAX_AGE: string;
-    REQUEST_TIMEOUT: number;
-  };
+	env: {
+		BRANCH: string;
+		FEATURE_FLAGS_APP_NAME: string;
+		FEATURE_FLAGS_MAX_AGE: string;
+		REQUEST_TIMEOUT: number;
+	};
 };
 
 // Balance between reducing the number of network hops to fetch
@@ -22,8 +22,8 @@ const APP_NAME: string = process.env.FEATURE_FLAGS_APP_NAME ?? 'cvs-app-config';
 const REQUEST_TIMEOUT = process.env.REQUEST_TIMEOUT ?? 10000;
 
 export const defaultFeatureFlagConfig: IFeatureFlagsConfig = {
-  application: APP_NAME,
-  environment: ENVIRONMENT_NAME,
-  maxAge: MAX_AGE,
-  requestTimeout: REQUEST_TIMEOUT,
+	application: APP_NAME,
+	environment: ENVIRONMENT_NAME,
+	maxAge: MAX_AGE,
+	requestTimeout: REQUEST_TIMEOUT,
 };

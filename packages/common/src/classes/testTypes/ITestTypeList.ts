@@ -1,3 +1,3 @@
 export interface ITestTypeList {
-  IDS: string[];
+	IDS: string[];
 }
