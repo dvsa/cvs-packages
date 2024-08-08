@@ -6,6 +6,7 @@ import {
 } from '@aws-sdk/client-secrets-manager';
 import { fromIni } from '@aws-sdk/credential-providers';
 import { captureAWSv3Client } from 'aws-xray-sdk';
+import { load as loadYaml } from 'js-yaml';
 
 export class SecretsManager {
 	private static readonly defaultConfig: Partial<SecretsManagerClientConfig> = {
@@ -37,20 +38,23 @@ export class SecretsManager {
 	 */
 	static async get<T>(
 		params: GetSecretValueCommandInput,
-		config: Partial<SecretsManagerClientConfig> = SecretsManager.defaultConfig
+		config: Partial<SecretsManagerClientConfig> = SecretsManager.defaultConfig,
+		parseOptions: { fromYaml: boolean } = { fromYaml: false }
 	): Promise<T> {
-		try {
-			const secretValue = await SecretsManager.getClient(config).send(new GetSecretValueCommand(params));
+		const secretValue = await SecretsManager.getClient(config).send(new GetSecretValueCommand(params));
 
-			const secret = JSON.parse(secretValue.SecretString || '');
+		let secret: T;
 
-			if (!secret || Object.keys(secret).length === 0) {
-				throw new Error(`Secret string '${params.SecretId}' was empty.`);
-			}
-
-			return Promise.resolve(secret as T);
-		} catch (err) {
-			return Promise.reject(err);
+		if (parseOptions.fromYaml) {
+			secret = loadYaml(secretValue.SecretString || '') as T;
+		} else {
+			secret = JSON.parse(secretValue.SecretString || '');
 		}
+
+		if (!secret || Object.keys(secret).length === 0) {
+			throw new Error(`Secret string '${params.SecretId}' was empty.`);
+		}
+
+		return Promise.resolve(secret as T);
 	}
 }
