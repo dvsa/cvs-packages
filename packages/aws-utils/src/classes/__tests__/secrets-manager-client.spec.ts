@@ -19,6 +19,12 @@ jest.mock('@aws-sdk/client-secrets-manager', () => {
 					});
 				}
 
+				if (command.input.SecretId === 'validSecretIdYAML') {
+					return Promise.resolve({
+						SecretString: 'section:\n' + '  key: value',
+					});
+				}
+
 				if (command.input.SecretId === 'emptySecret') {
 					return Promise.resolve({
 						SecretString: JSON.stringify({}),
@@ -46,6 +52,11 @@ describe('SecretsManager', () => {
 		it('returns a parsed secret when given a valid secret ID', async () => {
 			const secret = await SecretsManager.get({ SecretId: 'validSecretId' });
 			expect(secret).toEqual({ secretKey: 'secretValue' });
+		});
+
+		it('returns a parsed secret that was in YAML format when given a valid secret ID', async () => {
+			const secret = await SecretsManager.get({ SecretId: 'validSecretIdYAML' }, {}, { fromYaml: true });
+			expect(secret).toEqual({ section: { key: 'value' } });
 		});
 
 		it('throws an error when the secret ID is invalid', async () => {

@@ -1,6 +1,6 @@
 {
   "name": "@dvsa/aws-utilities",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Helper library for simplifying and standardising usage of AWS clients",
   "author": "DVSA",
   "license": "ISC",
@@ -37,13 +37,15 @@
     "@aws-sdk/credential-providers": "^3.624.0",
     "@aws-sdk/lib-dynamodb": "^3.624.0",
     "@aws-sdk/util-dynamodb": "^3.596.0",
-    "aws-xray-sdk": "^3.9.0"
+    "aws-xray-sdk": "^3.9.0",
+    "js-yaml": "^4.1.0"
   },
   "devDependencies": {
     "@biomejs/biome": "1.8.3",
     "@dvsa/biome-config": "0.1.0",
     "@types/aws-lambda": "^8.10.138",
     "@types/jest": "^29.5.12",
+    "@types/js-yaml": "^4.0.9",
     "@types/node": "^20.14.2",
     "aws-sdk-client-mock": "^4.0.1",
     "aws-sdk-client-mock-jest": "^4.0.1",
