@@ -19,7 +19,7 @@
     "postpublish": "git clean -fd && npm run clean:temp"
   },
   "dependencies": {
-    "esbuild": "^0.23.0",
+    "esbuild": "^0.23.1",
     "esbuild-plugin-typescript-decorators": "^0.1.0",
     "fs-extra": "^11.2.0",
     "zip-lib": "^1.0.4"
