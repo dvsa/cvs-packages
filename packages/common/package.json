@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "class-transformer": "^0.5.1",
-    "dayjs": "^1.11.11"
+    "dayjs": "^1.11.13"
   },
   "devDependencies": {
     "@biomejs/biome": "1.8.3",
