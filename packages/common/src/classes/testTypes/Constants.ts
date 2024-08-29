@@ -166,7 +166,6 @@ export const CENTRAL_DOCS_TEST = {
 		'60',
 		'65',
 		'66',
-		'67',
 		'82',
 		'83',
 		'95',
@@ -205,5 +204,6 @@ export const CENTRAL_DOCS_TEST = {
 		'193',
 		'194',
 		'195',
+		'199'
 	],
 };
