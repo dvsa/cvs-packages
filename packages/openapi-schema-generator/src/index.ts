@@ -1,11 +1,11 @@
 import { type SchemaObject } from 'openapi3-ts/oas30';
 import {
-  createProgram,
-  forEachChild,
-  isInterfaceDeclaration,
-  isPropertySignature,
-  type Node as TypescriptNode,
-  type TypeChecker,
+	type TypeChecker,
+	type Node as TypescriptNode,
+	createProgram,
+	forEachChild,
+	isInterfaceDeclaration,
+	isPropertySignature,
 } from 'typescript';
 
 type OpenAPIDataType = 'string' | 'number' | 'boolean' | 'object' | 'array';
