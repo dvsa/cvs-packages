@@ -1,6 +1,6 @@
-# service-bundler
+# openapi-schema-generator
 
-Centralised script for bundling and zipping service artifacts for deployment.
+Package for consuming a filepath which should contain TS interfaces, it will then generate an OpenAPI objects from these interfaces.
 
 ### Pre-requisites
 
