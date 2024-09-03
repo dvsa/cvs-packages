@@ -42,49 +42,49 @@ jobs:
           fetch-depth: 0
 
       - name: Check for `/packages/common` changes
-        uses: tj-actions/changed-files@v44
+        uses: tj-actions/changed-files@v45
         id: changed-common
         with:
           files: |
             packages/common/**
 
       - name: Check for `/packages/feature-flags` changes
-        uses: tj-actions/changed-files@v44
+        uses: tj-actions/changed-files@v45
         id: changed-feat-flags
         with:
           files: |
             packages/feature-flags/**    
 
       - name: Check for `/packages/service-bundler` changes
-        uses: tj-actions/changed-files@v44
+        uses: tj-actions/changed-files@v45
         id: changed-service-bundler
         with:
           files: |
             packages/service-bundler/**
 
       - name: Check for `/packages/aws-utils` changes
-        uses: tj-actions/changed-files@v44
+        uses: tj-actions/changed-files@v45
         id: changed-aws-utils
         with:
           files: |
             packages/aws-utils/**        
 
       - name: Check for `/packages/database` changes
-        uses: tj-actions/changed-files@v44
+        uses: tj-actions/changed-files@v45
         id: changed-database-operations
         with:
           files: |
             packages/database/**
 
       - name: Check for `/packages/biome-config` changes
-        uses: tj-actions/changed-files@v44
+        uses: tj-actions/changed-files@v45
         id: changed-biome-config
         with:
           files: |
             packages/biome-config/**
 
       - name: Check for `/packages/openai-schema-generator` changes
-        uses: tj-actions/changed-files@v44
+        uses: tj-actions/changed-files@v45
         id: changed-openapi-schema-gen
         with:
           files: |
