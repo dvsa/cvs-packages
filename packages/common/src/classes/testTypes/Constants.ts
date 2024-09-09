@@ -158,6 +158,8 @@ export const ANNUAL_WITH_CERTIFICATE: ITestTypeList = {
 export const CENTRAL_DOCS_TEST = {
 	IDS: [
 		'41',
+		'47',
+		'48',
 		'49',
 		'50',
 		'56',
@@ -166,6 +168,7 @@ export const CENTRAL_DOCS_TEST = {
 		'60',
 		'65',
 		'66',
+		'67',
 		'82',
 		'83',
 		'95',
@@ -204,6 +207,5 @@ export const CENTRAL_DOCS_TEST = {
 		'193',
 		'194',
 		'195',
-		'199',
 	],
 };
