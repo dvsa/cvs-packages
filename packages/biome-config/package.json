@@ -1,7 +1,7 @@
 {
   "name": "@dvsa/biome-config",
   "description": "Shareable Biome configuration",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "scripts": {},
   "author": "DVSA",
   "type": "module",
