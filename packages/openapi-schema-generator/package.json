@@ -22,7 +22,7 @@
     "openapi3-ts": "^4.4.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.8.3",
+    "@biomejs/biome": "1.9.2",
     "@dvsa/biome-config": "0.1.0",
     "@types/fs-extra": "^11.0.4",
     "@types/jest": "^29.5.11",
