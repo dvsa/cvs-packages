@@ -1,11 +1,14 @@
 {
   "name": "@dvsa/biome-config",
   "description": "Shareable Biome configuration",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "scripts": {},
   "author": "DVSA",
   "type": "module",
   "license": "ISC",
+  "peerDependencies": {
+    "@biomejs/biome": "1.9.3"
+  },
   "exports": {
     "./biome": "./src/config.json"
   },
