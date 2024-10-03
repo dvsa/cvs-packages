@@ -4,7 +4,9 @@ import {
 	type Node as TypescriptNode,
 	createProgram,
 	forEachChild,
+	isClassDeclaration,
 	isInterfaceDeclaration,
+	isPropertyDeclaration,
 	isPropertySignature,
 } from 'typescript';
 
@@ -45,10 +47,10 @@ export class TypescriptToOpenApiSpec {
 	 * Generate OpenAPI schema from TypeScript interfaces
 	 */
 	async generate(): Promise<OpenAPIObjectSchemaObject> {
-		const interfaces = this.extractInterfaces(this.pathToFile);
+		const definitions = this.extractDefinitions(this.pathToFile);
 
 		const schemas = Object.fromEntries(
-			Object.entries(interfaces).map(([name, def]) => [name, this.interfaceToOpenAPI(def)])
+			Object.entries(definitions).map(([name, def]) => [name, this.dictToOpenAPI(def)])
 		);
 
 		return this.dereferenceArrays(schemas) as unknown as OpenAPIObjectSchemaObject;
@@ -101,7 +103,7 @@ export class TypescriptToOpenApiSpec {
 	 * @returns {OpenAPIObjectSchemaObject}
 	 * @private
 	 */
-	private interfaceToOpenAPI(interfaceObj: Record<string, string>): OpenAPIObjectSchemaObject {
+	private dictToOpenAPI(interfaceObj: Record<string, string>): OpenAPIObjectSchemaObject {
 		const properties: Record<string, SchemaObject> = {};
 		const required: string[] = [];
 
@@ -149,51 +151,52 @@ export class TypescriptToOpenApiSpec {
 	}
 
 	/**
-	 * Extract interfaces from the TypeScript file and convert to a dictionary
+	 * Extract definition from the TypeScript file and convert to a dictionary
 	 * @param {string} filePath
 	 * @returns {Record<string, Record<string, string>>}
 	 * @private
 	 */
-	private extractInterfaces(filePath: string): Record<string, Record<string, string>> {
+	private extractDefinitions(filePath: string): Record<string, Record<string, string>> {
 		const program = createProgram([filePath], {});
 		const sourceFile = program.getSourceFile(filePath);
 		const typeChecker = program.getTypeChecker();
-		const interfaces: Record<string, Record<string, string>> = {};
+		const definitions: Record<string, Record<string, string>> = {};
 
 		if (sourceFile) {
-			this.visitNode(sourceFile, typeChecker, interfaces);
+			this.visitNode(sourceFile, typeChecker, definitions);
 		}
 
-		return interfaces;
+		return definitions;
 	}
 
 	/**
 	 * Visit each node in the TypeScript AST and extract interfaces
 	 * @param {TypescriptNode} node
 	 * @param {TypeChecker} typeChecker
-	 * @param {Record<string, Record<string, string>>} interfaces
+	 * @param {Record<string, Record<string, string>>} definition
 	 * @private
 	 */
 	private visitNode(
 		node: TypescriptNode,
 		typeChecker: TypeChecker,
-		interfaces: Record<string, Record<string, string>>
+		definition: Record<string, Record<string, string>>
 	): void {
-		if (isInterfaceDeclaration(node)) {
-			const symbol = typeChecker.getSymbolAtLocation(node.name);
+		if (isClassDeclaration(node) || isInterfaceDeclaration(node)) {
+			const symbol = node.name ? typeChecker.getSymbolAtLocation(node.name) : null;
 
 			if (symbol) {
-				const interfaceName = symbol.getName();
-				interfaces[interfaceName] = {};
+				const name = symbol.getName();
+				definition[name] = {};
 
 				for (const member of node.members) {
-					if (isPropertySignature(member) && member.type) {
+					if ((isPropertySignature(member) || isPropertyDeclaration(member)) && member.type) {
 						const propertyName = member.name.getText();
-						interfaces[interfaceName][propertyName] = member.type.getText();
+						definition[name][propertyName] = member.type.getText();
 					}
 				}
 			}
 		}
-		forEachChild(node, (n) => this.visitNode(n, typeChecker, interfaces));
+
+		forEachChild(node, (n) => this.visitNode(n, typeChecker, definition));
 	}
 }

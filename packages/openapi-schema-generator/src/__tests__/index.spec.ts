@@ -22,9 +22,9 @@ describe('TypescriptToOpenApiSpec', () => {
 
 	describe('generate', () => {
 		it('should generate OpenAPI schema from TypeScript interfaces', async () => {
-			// Mock the extractInterfaces method
+			// Mock the extractDefinitions method
 			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-			jest.spyOn(typescriptToOpenApiSpec as any, 'extractInterfaces').mockReturnValue({
+			jest.spyOn(typescriptToOpenApiSpec as any, 'extractDefinitions').mockReturnValue({
 				User: {
 					id: 'number',
 					name: 'string',
@@ -82,7 +82,7 @@ describe('TypescriptToOpenApiSpec', () => {
 		});
 	});
 
-	describe('interfaceToOpenAPI', () => {
+	describe('dictToOpenAPI', () => {
 		it('should convert TypeScript interface to OpenAPI schema', () => {
 			const input = {
 				id: 'number',
@@ -91,7 +91,7 @@ describe('TypescriptToOpenApiSpec', () => {
 			};
 
 			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-			const result = (typescriptToOpenApiSpec as any).interfaceToOpenAPI(input);
+			const result = (typescriptToOpenApiSpec as any).dictToOpenAPI(input);
 
 			expect(result).toEqual({
 				type: 'object',
@@ -123,8 +123,8 @@ describe('TypescriptToOpenApiSpec', () => {
 		});
 	});
 
-	describe('extractInterfaces', () => {
-		it('should extract interfaces from TypeScript file', () => {
+	describe('extractDefinitions', () => {
+		it('should extract definitions from TypeScript file', () => {
 			// Mock the TypeScript compiler API
 			const mockProgram = {
 				getSourceFile: jest.fn().mockReturnValue({}),
@@ -136,7 +136,7 @@ describe('TypescriptToOpenApiSpec', () => {
 			jest.spyOn(typescriptToOpenApiSpec as any, 'visitNode').mockImplementation();
 
 			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-			(typescriptToOpenApiSpec as any).extractInterfaces(mockFilePath);
+			(typescriptToOpenApiSpec as any).extractDefinitions(mockFilePath);
 
 			expect(require('typescript').createProgram).toHaveBeenCalledWith([mockFilePath], {});
 			expect(mockProgram.getSourceFile).toHaveBeenCalledWith(mockFilePath);
