@@ -12,185 +12,49 @@ on:
         required: true
         type: choice
         options:
-          - 'common'
-          - 'feature-flags'
-          - 'service-bundler'
           - 'aws-utils'
-          - 'database'
           - 'biome-config'
-          - 'openapi-schema-gen'
+          - 'common'
+          - 'database'
+          - 'feature-flags'
+          - 'openapi-schema-generator'
+          - 'service-bundler'
   push:
     branches:
       - main
 
 jobs:
-  orchestrator:
-    name: Orchestrator
+  check-changes:
+    name: Check for package changes
     runs-on: ubuntu-latest
     outputs:
-      publish-common: ${{ steps.changed-common.outputs.any_changed == 'true' || null }}
-      publish-feature-flags: ${{ steps.changed-feat-flags.outputs.any_changed == 'true' || null }}
-      publish-service-bundler: ${{ steps.changed-service-bundler.outputs.any_changed == 'true' || null }}
-      publish-aws-utils: ${{ steps.changed-aws-utils.outputs.any_changed == 'true' || null }}
-      publish-database-operations: ${{ steps.changed-database-operations.outputs.any_changed == 'true' || null }}
-      publish-biome-config: ${{ steps.changed-biome-config.outputs.any_changed == 'true' || null }}
-      publish-openapi-schema-gen: ${{ steps.changed-openapi-schema-gen.outputs.any_changed == 'true' || null }}
+      changed_packages: ${{ steps.get-changed-packages.outputs.packages }}
     steps:
       - name: 📨 Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Check for `/packages/common` changes
-        uses: tj-actions/changed-files@v45
-        id: changed-common
-        with:
-          files: |
-            packages/common/**
+      - name: Get changed packages
+        id: get-changed-packages
+        run: |
+          changed_packages=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -oP 'packages/\K[^/]+' | sort -u | jq -R -s -c 'split("\n")[:-1]')
+          echo "packages=$changed_packages" >> $GITHUB_OUTPUT
 
-      - name: Check for `/packages/feature-flags` changes
-        uses: tj-actions/changed-files@v45
-        id: changed-feat-flags
-        with:
-          files: |
-            packages/feature-flags/**    
-
-      - name: Check for `/packages/service-bundler` changes
-        uses: tj-actions/changed-files@v45
-        id: changed-service-bundler
-        with:
-          files: |
-            packages/service-bundler/**
-
-      - name: Check for `/packages/aws-utils` changes
-        uses: tj-actions/changed-files@v45
-        id: changed-aws-utils
-        with:
-          files: |
-            packages/aws-utils/**        
-
-      - name: Check for `/packages/database` changes
-        uses: tj-actions/changed-files@v45
-        id: changed-database-operations
-        with:
-          files: |
-            packages/database/**
-
-      - name: Check for `/packages/biome-config` changes
-        uses: tj-actions/changed-files@v45
-        id: changed-biome-config
-        with:
-          files: |
-            packages/biome-config/**
-
-      - name: Check for `/packages/openai-schema-generator` changes
-        uses: tj-actions/changed-files@v45
-        id: changed-openapi-schema-gen
-        with:
-          files: |
-            packages/openapi-schema-generator/**      
-
-  publish-common:
-    needs: orchestrator
+  publish-packages:
+    needs: check-changes
+    if: ${{ needs.check-changes.outputs.changed_packages != '[]' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
-    if: ${{ needs.orchestrator.outputs.publish-common || github.event_name == 'workflow_dispatch' && inputs.package == 'common'}}
+    strategy:
+      matrix:
+        package: ${{ fromJson(needs.check-changes.outputs.changed_packages) }}
     steps:
-      - name: 📨 Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Publish package "packages/common" ${{ inputs.dry-run && 'in' || 'not in' }} dry run mode
+      - name: Publish package
         uses: ./.github/actions/publish-package
         with:
-          dry-run: ${{ inputs.dry-run && 'true' || 'false' }}
-          package-path: 'packages/common'
-          token: ${{ secrets.NPM_AUTH_TOKEN }}
-
-  publish-feature-flags:
-    needs: orchestrator
-    runs-on: ubuntu-latest
-    if: ${{ needs.orchestrator.outputs.publish-feature-flags || github.event_name == 'workflow_dispatch' && inputs.package == 'feature-flags' }}
-    steps:
-      - name: 📨 Checkout
-        uses: actions/checkout@v4
-
-      - name: Publish package "packages/feature-flags" ${{ inputs.dry-run && 'in' || 'not in' }} dry run mode
-        uses: ./.github/actions/publish-package
-        with:
-          dry-run: ${{ inputs.dry-run && 'true' || 'false' }}
-          package-path: 'packages/feature-flags'
-          token: ${{ secrets.NPM_AUTH_TOKEN }}
-
-  publish-service-bundler:
-    needs: orchestrator
-    runs-on: ubuntu-latest
-    if: ${{ needs.orchestrator.outputs.publish-service-bundler || github.event_name == 'workflow_dispatch' && inputs.package == 'service-bundler' }}
-    steps:
-      - name: 📨 Checkout
-        uses: actions/checkout@v4
-
-      - name: Publish package "packages/service-bundler" ${{ inputs.dry-run && 'in' || 'not in' }} dry run mode
-        uses: ./.github/actions/publish-package
-        with:
-          dry-run: ${{ inputs.dry-run && 'true' || 'false' }}
-          package-path: 'packages/service-bundler'
-          token: ${{ secrets.NPM_AUTH_TOKEN }}
-
-  publish-aws-utils:
-    needs: orchestrator
-    runs-on: ubuntu-latest
-    if: ${{ needs.orchestrator.outputs.publish-aws-utils || github.event_name == 'workflow_dispatch' && inputs.package == 'aws-utils' }}
-    steps:
-      - name: 📨 Checkout
-        uses: actions/checkout@v4
-
-      - name: Publish package "packages/aws-utils" ${{ inputs.dry-run && 'in' || 'not in' }} dry run mode
-        uses: ./.github/actions/publish-package
-        with:
-          dry-run: ${{ inputs.dry-run && 'true' || 'false' }}
-          package-path: 'packages/aws-utils'
-          token: ${{ secrets.NPM_AUTH_TOKEN }}
-
-  publish-database-operations:
-    needs: orchestrator
-    runs-on: ubuntu-latest
-    if: ${{ needs.orchestrator.outputs.publish-database-operations || github.event_name == 'workflow_dispatch' && inputs.package == 'database' }}
-    steps:
-      - name: 📨 Checkout
-        uses: actions/checkout@v4
-
-      - name: Publish package "packages/database" ${{ inputs.dry-run && 'in' || 'not in' }} dry run mode
-        uses: ./.github/actions/publish-package
-        with:
-          dry-run: ${{ inputs.dry-run && 'true' || 'false' }}
-          package-path: 'packages/database'
-          token: ${{ secrets.NPM_AUTH_TOKEN }}
-
-  publish-biome-config:
-    needs: orchestrator
-    runs-on: ubuntu-latest
-    if: ${{ needs.orchestrator.outputs.publish-biome-config || github.event_name == 'workflow_dispatch' && inputs.package == 'biome-config' }}
-    steps:
-      - name: 📨 Checkout
-        uses: actions/checkout@v4
-
-      - name: Publish package "packages/biome-config" ${{ inputs.dry-run && 'in' || 'not in' }} dry run mode
-        uses: ./.github/actions/publish-package
-        with:
-          dry-run: ${{ inputs.dry-run && 'true' || 'false' }}
-          package-path: 'packages/biome-config'
-          token: ${{ secrets.NPM_AUTH_TOKEN }}
-
-  publish-openapi-schema-gen:
-    needs: orchestrator
-    runs-on: ubuntu-latest
-    if: ${{ needs.orchestrator.outputs.publish-openapi-schema-gen || github.event_name == 'workflow_dispatch' && inputs.package == 'openapi-schema-gen' }}
-    steps:
-      - name: 📨 Checkout
-        uses: actions/checkout@v4
-
-      - name: Publish package "packages/openapi-schema-generator" ${{ inputs.dry-run && 'in' || 'not in' }} dry run mode
-        uses: ./.github/actions/publish-package
-        with:
-          dry-run: ${{ inputs.dry-run && 'true' || 'false' }}
-          package-path: 'packages/openapi-schema-generator'
+          dry-run: ${{ github.event.inputs.dry-run && 'true' || 'false' }}
+          package-path: 'packages/${{ matrix.package }}'
           token: ${{ secrets.NPM_AUTH_TOKEN }}
