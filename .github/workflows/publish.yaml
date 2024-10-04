@@ -45,12 +45,16 @@ jobs:
       - name: Get changed packages
         id: get-changed-packages
         run: |
-          changed_packages=$(echo '${{ steps.changed-files.outputs.all_changed_files }}' | grep -oP 'packages/\K[^/]+' | sort -u | jq -R -s -c 'split("\n")[:-1]')
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            changed_packages='["${{ github.event.inputs.package }}"]'
+          else
+            changed_packages=$(echo '${{ steps.changed-files.outputs.all_changed_files }}' | grep -oP 'packages/\K[^/]+' | sort -u | jq -R -s -c 'split("\n")[:-1]')
+          fi
           echo "changed_packages=$changed_packages" >> $GITHUB_OUTPUT
 
   publish-packages:
     needs: check-changes
-    if: ${{ needs.check-changes.outputs.changed_packages != '[]' || github.event_name == 'workflow_dispatch' }}
+    if: ${{ needs.check-changes.outputs.changed_packages != '[]' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
