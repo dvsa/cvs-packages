@@ -28,18 +28,25 @@ jobs:
     name: Check for package changes
     runs-on: ubuntu-latest
     outputs:
-      changed_packages: ${{ steps.get-changed-packages.outputs.packages }}
+      changed_packages: ${{ steps.get-changed-packages.outputs.changed_packages }}
     steps:
       - name: 📨 Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v45
+        with:
+          files: |
+            packages/**
+
       - name: Get changed packages
         id: get-changed-packages
         run: |
-          changed_packages=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -oP 'packages/\K[^/]+' | sort -u | jq -R -s -c 'split("\n")[:-1]')
-          echo "packages=$changed_packages" >> $GITHUB_OUTPUT
+          changed_packages=$(echo '${{ steps.changed-files.outputs.all_changed_files }}' | grep -oP 'packages/\K[^/]+' | sort -u | jq -R -s -c 'split("\n")[:-1]')
+          echo "changed_packages=$changed_packages" >> $GITHUB_OUTPUT
 
   publish-packages:
     needs: check-changes
