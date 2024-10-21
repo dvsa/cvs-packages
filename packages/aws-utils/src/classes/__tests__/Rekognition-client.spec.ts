@@ -11,7 +11,7 @@ describe('Rekognition', () => {
 		jest.clearAllMocks();
 	});
 
-	it('returns a RekognitionClient with default config when no config is provided', () => {
+	it('returns a RekognitionClient with default config when no config is provided.', () => {
 		const client = Rekognition.getClient();
 		expect(RekognitionClient).toHaveBeenCalledWith({ region: 'eu-west-1' });
 		expect(client).toBeInstanceOf(RekognitionClient);
