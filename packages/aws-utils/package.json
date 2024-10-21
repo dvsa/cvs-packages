@@ -29,14 +29,14 @@
     "postpublish": "git clean -fd && npm run clean:temp"
   },
   "dependencies": {
-    "@aws-sdk/client-cloudwatch-logs": "^3.670.0",
-    "@aws-sdk/client-dynamodb": "^3.670.0",
-    "@aws-sdk/client-s3": "^3.670.0",
-    "@aws-sdk/client-secrets-manager": "^3.670.0",
-    "@aws-sdk/client-ses": "^3.670.0",
-    "@aws-sdk/client-rekognition": "^3.670.0",
-    "@aws-sdk/credential-providers": "^3.670.0",
-    "@aws-sdk/lib-dynamodb": "^3.670.0",
+    "@aws-sdk/client-cloudwatch-logs": "^3.675.0",
+    "@aws-sdk/client-dynamodb": "^3.675.0",
+    "@aws-sdk/client-s3": "^3.675.0",
+    "@aws-sdk/client-secrets-manager": "^3.675.0",
+    "@aws-sdk/client-ses": "^3.675.0",
+    "@aws-sdk/client-rekognition": "^3.675.0",
+    "@aws-sdk/credential-providers": "^3.675.0",
+    "@aws-sdk/lib-dynamodb": "^3.675.0",
     "@aws-sdk/util-dynamodb": "^3.670.0",
     "aws-xray-sdk": "^3.9.0",
     "js-yaml": "^4.1.0"
