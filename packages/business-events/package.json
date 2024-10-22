@@ -5,10 +5,11 @@
   "author": "DVSA",
   "license": "ISC",
   "files": [
-    "src/index.ts",
-    "src/business-event.ts",
-    "src/event-factory.ts",
-    "src/event-publisher.ts",
+    "index.js",
+    "business-event.js",
+    "event-factory.js",
+    "event-publisher.js",
+    "business-event-validator.js",
     "LICENSE",
     "package.json"
   ],
@@ -18,7 +19,7 @@
   ],
   "scripts": {
     "build": "npm run clean && tsc",
-    "clean": "rimraf coverage dist && npm run clean:temp",
+    "clean": "rimraf coverage dist",
     "format": "prettier . --write",
     "gitSecrets": "git secrets --scan . && git log -p -- . | scanrepo",
     "lint": "eslint src --ext .ts",
@@ -28,7 +29,7 @@
     "test:coverage": "jest --coverage",
     "build:package": "npm run build",
     "prepublishOnly": "npm run build:package && cp -r ./dist/* . && rm -rf ./dist",
-    "postpublish": "git clean -fd && npm run clean:temp"
+    "postpublish": "git clean -fd"
   },
   "dependencies": {
     "@aws-sdk/client-sns": "^3.620.0",
@@ -54,9 +55,6 @@
     "typescript": "^5.4.5"
   },
   "lint-staged": {
-    "*.ts": [
-      "npm run lint:fix",
-      "npm run format"
-    ]
+    "*.{js,ts,mjs,css,md,ts,json}": "npm run lint:fix -- --no-error-on-unmatched-pattern"
   }
 }
