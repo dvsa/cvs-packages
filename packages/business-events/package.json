@@ -5,11 +5,9 @@
   "author": "DVSA",
   "license": "ISC",
   "files": [
-    "index.js",
-    "business-event.js",
-    "event-factory.js",
-    "event-publisher.js",
-    "business-event-validator.js",
+    "**.{js,ts}",
+    "!jest.config.ts",
+    "!src/__tests__/*.ts",
     "LICENSE",
     "package.json"
   ],
