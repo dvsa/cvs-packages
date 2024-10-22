@@ -1,0 +1,12 @@
+// settings.json for a monorepo project under the root folder:
+{
+  "jest.virtualFolders": [
+    { "name": "@dvsa/aws-utilities", "rootPath": "packages/aws-utils" },
+    { "name": "@dvsa/biome-config", "rootPath": "packages/biome-config" },
+    { "name": "@dvsa/business-events", "rootPath": "packages/business-events" },
+    { "name": "@dvsa/cvs-microservice-common", "rootPath": "packages/common" },
+    { "name": "@dvsa/database-helpers", "rootPath": "packages/database" },
+    { "name": "@dvsa/cvs-feature-flags", "rootPath": "packages/feature-flags" },
+    { "name": "@dvsa/service-bundler", "rootPath": "packages/service-bundler" }
+  ]
+}
