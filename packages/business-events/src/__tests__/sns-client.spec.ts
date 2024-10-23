@@ -2,6 +2,7 @@ const xrayMock = jest.fn();
 
 import { randomUUID } from 'node:crypto';
 import { SNSClient } from '@aws-sdk/client-sns';
+import { BusinessEventValidationError } from '../business-event-validation-error';
 import { BusinessEventPublisher } from '../event-publisher';
 import { TestSystemEventFactory } from './test-system-event-factory';
 
@@ -132,21 +133,27 @@ describe('BusinessEvents', () => {
 			await BusinessEventPublisher.publish(validSqsPayload);
 
 			expect(sendMock).toHaveBeenCalledWith(validSqsPayload.command);
-			expect(consoleErrorSpy).toHaveBeenCalledWith(error);
+			expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to publish business event', error);
 		});
 
 		it('logs an error when publishing without a topic arn', async () => {
 			const invalidPayload = TestSystemEventFactory.fromSqsRecord(sqsRecord).invalidEventMissingArn();
 
 			await BusinessEventPublisher.publish(invalidPayload);
-			expect(consoleErrorSpy).toHaveBeenCalledWith(new Error('Business event requires a topic ARN'));
+			expect(consoleErrorSpy).toHaveBeenCalledWith(
+				'BusinessEventValidator',
+				new BusinessEventValidationError('Business event requires a topic ARN')
+			);
 		});
 
 		it('logs an error when publishing without an event name', async () => {
 			const invalidPayload = TestSystemEventFactory.fromSqsRecord(sqsRecord).invalidEventMissingName();
 
 			await BusinessEventPublisher.publish(invalidPayload);
-			expect(consoleErrorSpy).toHaveBeenCalledWith(new Error('Business event requires an event name'));
+			expect(consoleErrorSpy).toHaveBeenCalledWith(
+				'BusinessEventValidator',
+				new BusinessEventValidationError('Business event requires an event name')
+			);
 		});
 	});
 });

@@ -2,6 +2,7 @@ import { SNSClient, SNSClientConfig } from '@aws-sdk/client-sns';
 import { fromIni } from '@aws-sdk/credential-providers';
 import { captureAWSv3Client } from 'aws-xray-sdk';
 import { BusinessEvent } from './business-event';
+import { BusinessEventValidationError } from './business-event-validation-error';
 import { BusinessEventValidator } from './business-event-validator';
 
 /**
@@ -39,13 +40,14 @@ export class BusinessEventPublisher {
 		try {
 			const validator = new BusinessEventValidator(payload);
 			validator.validate();
-			if (validator.error) {
-				throw new Error(validator.message);
-			}
 
 			return BusinessEventPublisher.getClient(config).send(payload.command);
 		} catch (error) {
-			console.error(error);
+			if (error instanceof BusinessEventValidationError) {
+				console.error(`${BusinessEventValidator.name}`, error);
+			} else {
+				console.error('Failed to publish business event', error);
+			}
 		}
 	}
 }
