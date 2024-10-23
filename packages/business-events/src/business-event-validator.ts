@@ -1,4 +1,5 @@
 import { BusinessEvent } from './business-event';
+import { BusinessEventValidationError } from './business-event-validation-error';
 
 export class BusinessEventValidator {
 	error = false;
@@ -6,22 +7,20 @@ export class BusinessEventValidator {
 
 	constructor(public payload: BusinessEvent) {}
 
-	validate() {
+	validate(): void {
 		this.validateEventContainsTopic();
 		this.validateEventContainsName();
 	}
 
-	validateEventContainsTopic() {
+	private validateEventContainsTopic(): void {
 		if (!this.error && !this.payload.topicArn) {
-			this.error = true;
-			this.message = 'Business event requires a topic ARN';
+			throw new BusinessEventValidationError('Business event requires a topic ARN');
 		}
 	}
 
-	validateEventContainsName() {
+	private validateEventContainsName(): void {
 		if (!this.error && !this.payload.event) {
-			this.error = true;
-			this.message = 'Business event requires an event name';
+			throw new BusinessEventValidationError('Business event requires an event name');
 		}
 	}
 }
