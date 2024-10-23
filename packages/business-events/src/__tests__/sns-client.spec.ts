@@ -138,14 +138,14 @@ describe('BusinessEvents', () => {
 		it('logs an error when publishing without a topic arn', async () => {
 			const invalidPayload = TestSystemEventFactory.fromSqsRecord(sqsRecord).invalidEventMissingArn();
 
-			await expect(BusinessEventPublisher.publish(invalidPayload));
+			await BusinessEventPublisher.publish(invalidPayload);
 			expect(consoleErrorSpy).toHaveBeenCalledWith(new Error('Business event requires a topic ARN'));
 		});
 
 		it('logs an error when publishing without an event name', async () => {
 			const invalidPayload = TestSystemEventFactory.fromSqsRecord(sqsRecord).invalidEventMissingName();
 
-			await expect(BusinessEventPublisher.publish(invalidPayload));
+			await BusinessEventPublisher.publish(invalidPayload);
 			expect(consoleErrorSpy).toHaveBeenCalledWith(new Error('Business event requires an event name'));
 		});
 	});
