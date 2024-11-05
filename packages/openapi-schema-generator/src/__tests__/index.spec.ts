@@ -20,7 +20,7 @@ describe('TypescriptToOpenApiSpec', () => {
 		jest.resetAllMocks();
 	});
 
-	describe('generate', () => {
+	describe('generateMany', () => {
 		it('should generate OpenAPI schema from TypeScript interfaces', async () => {
 			// Mock the extractDefinitions method
 			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -33,7 +33,7 @@ describe('TypescriptToOpenApiSpec', () => {
 				},
 			});
 
-			const result = await typescriptToOpenApiSpec.generate();
+			const result = await typescriptToOpenApiSpec.generateMany();
 
 			expect(result).toEqual({
 				User: {

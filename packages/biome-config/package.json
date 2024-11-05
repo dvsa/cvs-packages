@@ -2,7 +2,9 @@
   "name": "@dvsa/biome-config",
   "description": "Shareable Biome configuration",
   "version": "0.3.0",
-  "scripts": {},
+  "scripts": {
+    "lint:fix": "echo 'Not implemented'"
+  },
   "author": "DVSA",
   "type": "module",
   "license": "ISC",
