@@ -1,13 +1,13 @@
 import { type SchemaObject } from 'openapi3-ts/oas30';
 import {
-	type TypeChecker,
-	type Node as TypescriptNode,
-	createProgram,
-	forEachChild,
-	isClassDeclaration,
-	isInterfaceDeclaration,
-	isPropertyDeclaration,
-	isPropertySignature,
+  createProgram,
+  forEachChild,
+  isClassDeclaration,
+  isInterfaceDeclaration,
+  isPropertyDeclaration,
+  isPropertySignature,
+  type Node as TypescriptNode,
+  type TypeChecker,
 } from 'typescript';
 
 type OpenAPIDataType = 'string' | 'number' | 'boolean' | 'object' | 'array';
@@ -44,13 +44,29 @@ export class TypescriptToOpenApiSpec {
 	}
 
 	/**
-	 * Generate OpenAPI schema from TypeScript interfaces
+	 * Generate many OpenAPI schemas from TypeScript interfaces
 	 */
-	async generate(): Promise<OpenAPIObjectSchemaObject> {
+	async generateMany(): Promise<OpenAPIObjectSchemaObject> {
 		const definitions = this.extractDefinitions(this.pathToFile);
 
 		const schemas = Object.fromEntries(
 			Object.entries(definitions).map(([name, def]) => [name, this.dictToOpenAPI(def)])
+		);
+
+		return this.dereferenceArrays(schemas) as unknown as OpenAPIObjectSchemaObject;
+	}
+
+	/**
+	 * Generate a single OpenAPI schema from a TypeScript interface
+	 * @param interfaceName
+	 */
+	async generateByName(interfaceName: string): Promise<OpenAPIObjectSchemaObject> {
+		const definitions = this.extractDefinitions(this.pathToFile, interfaceName);
+
+		const schemas = Object.fromEntries(
+			Object.entries(definitions)
+				.map(([name, def]) => [name, this.dictToOpenAPI(def)])
+				.filter(([name]) => name === interfaceName)
 		);
 
 		return this.dereferenceArrays(schemas) as unknown as OpenAPIObjectSchemaObject;
@@ -153,20 +169,28 @@ export class TypescriptToOpenApiSpec {
 	/**
 	 * Extract definition from the TypeScript file and convert to a dictionary
 	 * @param {string} filePath
+	 * @param {string} interfaceName - optional name if only requesting a single interface to be converted
 	 * @returns {Record<string, Record<string, string>>}
 	 * @private
 	 */
-	private extractDefinitions(filePath: string): Record<string, Record<string, string>> {
+	private extractDefinitions(filePath: string, interfaceName?: string): Record<string, Record<string, string>> {
 		const program = createProgram([filePath], {});
 		const sourceFile = program.getSourceFile(filePath);
-		const typeChecker = program.getTypeChecker();
 		const definitions: Record<string, Record<string, string>> = {};
 
 		if (sourceFile) {
+			const typeChecker = program.getTypeChecker();
 			this.visitNode(sourceFile, typeChecker, definitions);
 		}
 
-		return definitions;
+		if (interfaceName && !definitions[interfaceName]) {
+			throw new Error(`Interface ${interfaceName} not found in ${filePath}`);
+		}
+
+		return interfaceName
+			? // if an interface name is provided, only return the requested model
+				{ [interfaceName]: definitions[interfaceName] }
+			: definitions;
 	}
 
 	/**
