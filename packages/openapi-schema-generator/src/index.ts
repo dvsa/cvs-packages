@@ -63,13 +63,61 @@ export class TypescriptToOpenApiSpec {
 	async generateByName(interfaceName: string): Promise<OpenAPIObjectSchemaObject> {
 		const definitions = this.extractDefinitions(this.pathToFile, interfaceName);
 
+		const referencedModels = this.findReferencedModels(
+			definitions[interfaceName],
+			definitions,
+			new Set([interfaceName])
+		);
+
 		const schemas = Object.fromEntries(
 			Object.entries(definitions)
 				.map(([name, def]) => [name, this.dictToOpenAPI(def)])
-				.filter(([name]) => name === interfaceName)
+				.filter(([name]) => typeof name === 'string' && referencedModels.has(name))
 		);
 
 		return this.dereferenceArrays(schemas) as unknown as OpenAPIObjectSchemaObject;
+	}
+
+	/**
+	 * Recursively find all referenced models in a schema
+	 * e.g.
+	 * - interface A { prop: B }
+	 * - interface B { prop: C }
+	 * - This will return a set containing A, B, and C definitions
+	 * @param schema
+	 * @param definitions
+	 * @param referencedModels
+	 * @private
+	 */
+	private findReferencedModels(
+		schema: SchemaObject,
+		definitions: Record<string, SchemaObject>,
+		referencedModels: Set<string> = new Set()
+	): Set<string> {
+		const primitiveTypes = [
+			'string',
+			'number',
+			'boolean',
+			'any',
+			'unknown',
+			'null',
+			'undefined',
+			'void',
+			'never',
+			'object',
+			'array',
+		] as const;
+
+		for (const [, value] of Object.entries(schema ?? {})) {
+			if (!primitiveTypes.includes(value)) {
+				if (value && !referencedModels.has(value)) {
+					referencedModels.add(value);
+					this.findReferencedModels(definitions[value], definitions, referencedModels);
+				}
+			}
+		}
+
+		return referencedModels;
 	}
 
 	/**
@@ -187,10 +235,7 @@ export class TypescriptToOpenApiSpec {
 			throw new Error(`Interface ${interfaceName} not found in ${filePath}`);
 		}
 
-		return interfaceName
-			? // if an interface name is provided, only return the requested model
-				{ [interfaceName]: definitions[interfaceName] }
-			: definitions;
+		return definitions;
 	}
 
 	/**
