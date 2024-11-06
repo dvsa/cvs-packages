@@ -1,5 +1,5 @@
-import { TypescriptToOpenApiSpec } from '../index';
 import { join } from 'node:path';
+import { TypescriptToOpenApiSpec } from '../index';
 
 describe('Generation of models', () => {
 	let typescriptToOpenApiSpec: TypescriptToOpenApiSpec;
