@@ -12,6 +12,9 @@ const defaultFeatureFlags = {
 	issueDocsCentrally: {
 		enabled: true,
 	},
+	recallsApi: {
+		enabled: false,
+	},
 };
 
 export type FeatureFlags = typeof defaultFeatureFlags;
