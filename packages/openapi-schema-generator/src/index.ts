@@ -1,13 +1,18 @@
 import { type SchemaObject } from 'openapi3-ts/oas30';
 import {
-	type TypeChecker,
-	type Node as TypescriptNode,
 	createProgram,
 	forEachChild,
 	isClassDeclaration,
 	isInterfaceDeclaration,
+	isLiteralTypeNode,
 	isPropertyDeclaration,
 	isPropertySignature,
+	isTypeAliasDeclaration,
+	isUnionTypeNode,
+	isVariableDeclaration,
+	isVariableStatement,
+	type Node as TypescriptNode,
+	type TypeChecker,
 } from 'typescript';
 
 type OpenAPIDataType = 'string' | 'number' | 'boolean' | 'object' | 'array';
@@ -27,11 +32,19 @@ interface OpenAPIArraySchemaObject extends OpenAPISchemaObjectBase {
 	items: SchemaObject;
 }
 
+interface OpenAPIEnumSchemaObject<T> extends OpenAPISchemaObjectBase {
+	enum: T[];
+}
+
 interface OpenAPIRefSchemaObject extends OpenAPISchemaObjectBase {
 	$ref: string;
 }
 
-type SpecificOpenAPISchemaObject = OpenAPIObjectSchemaObject | OpenAPIArraySchemaObject | OpenAPIRefSchemaObject;
+type SpecificOpenAPISchemaObject =
+	| OpenAPIObjectSchemaObject
+	| OpenAPIArraySchemaObject
+	| OpenAPIRefSchemaObject
+	| OpenAPIEnumSchemaObject<unknown>;
 
 export class TypescriptToOpenApiSpec {
 	/**
@@ -112,7 +125,10 @@ export class TypescriptToOpenApiSpec {
 			if (!primitiveTypes.includes(value)) {
 				if (value && !referencedModels.has(value)) {
 					referencedModels.add(value);
-					this.findReferencedModels(definitions[value], definitions, referencedModels);
+
+					if (definitions[value]) {
+						this.findReferencedModels(definitions[value], definitions, referencedModels);
+					}
 				}
 			}
 		}
@@ -167,7 +183,9 @@ export class TypescriptToOpenApiSpec {
 	 * @returns {OpenAPIObjectSchemaObject}
 	 * @private
 	 */
-	private dictToOpenAPI(interfaceObj: Record<string, string>): OpenAPIObjectSchemaObject {
+	private dictToOpenAPI(
+		interfaceObj: Record<string, string>
+	): OpenAPIObjectSchemaObject | OpenAPIEnumSchemaObject<unknown> {
 		const properties: Record<string, SchemaObject> = {};
 		const required: string[] = [];
 
@@ -179,6 +197,22 @@ export class TypescriptToOpenApiSpec {
 				required.push(propertyName);
 			}
 
+			// if it's an array, it likely is a
+			if (Array.isArray(value)) {
+				const val: unknown[] = value;
+
+				const calcType = val.every((val) => typeof val === 'boolean')
+					? 'boolean'
+					: val.every((val) => typeof val === 'number')
+						? 'number'
+						: 'string';
+
+				return {
+					type: calcType,
+					enum: value,
+				};
+			}
+			// otherwise calculate the type based on the structure
 			properties[propertyName] = this.typeToSchemaObject(value);
 		}
 
@@ -195,21 +229,20 @@ export class TypescriptToOpenApiSpec {
 	 * @returns {SchemaObject | OpenAPIRefSchemaObject}
 	 * @private
 	 */
-	private typeToSchemaObject(value: string): SchemaObject | OpenAPIRefSchemaObject {
+	private typeToSchemaObject(value: string | unknown): SchemaObject | OpenAPIRefSchemaObject {
+		if (typeof value === 'string' && value.endsWith('[]')) {
+			return {
+				type: 'array',
+				items: this.typeToSchemaObject(value.slice(0, -2)),
+			};
+		}
+
 		switch (value) {
 			case 'string':
-				return { type: 'string' };
 			case 'number':
-				return { type: 'number' };
 			case 'boolean':
-				return { type: 'boolean' };
+				return { type: value };
 			default:
-				if (value.endsWith('[]')) {
-					return {
-						type: 'array',
-						items: this.typeToSchemaObject(value.slice(0, -2)),
-					};
-				}
 				return { $ref: `#/components/schemas/${value}` };
 		}
 	}
@@ -248,20 +281,52 @@ export class TypescriptToOpenApiSpec {
 	private visitNode(
 		node: TypescriptNode,
 		typeChecker: TypeChecker,
-		definition: Record<string, Record<string, string>>
+		definition: Record<string, Record<string, string | string[]>>
 	): void {
 		if (isClassDeclaration(node) || isInterfaceDeclaration(node)) {
 			const symbol = node.name ? typeChecker.getSymbolAtLocation(node.name) : null;
 
 			if (symbol) {
 				const name = symbol.getName();
-				definition[name] = {};
+				definition[name] = definition[name] ?? {};
 
 				for (const member of node.members) {
 					if ((isPropertySignature(member) || isPropertyDeclaration(member)) && member.type) {
 						const propertyName = member.name.getText();
 						definition[name][propertyName] = member.type.getText();
 					}
+				}
+			}
+		}
+
+		// Add handling for type declarations
+		else if (isTypeAliasDeclaration(node)) {
+			const name = node.name.getText();
+			definition[name] = definition[name] ?? {};
+
+			// If it's a union type of string literals (enum-like)
+			if (isUnionTypeNode(node.type)) {
+				definition[name] = {
+					enum: node.type.types.map((t) =>
+						isLiteralTypeNode(t) ? t.literal.getText().replace(/['"]/g, '') : t.getText()
+					),
+				};
+			}
+		}
+
+		// Add handling for const declarations
+		else if (isVariableStatement(node)) {
+			const declaration = node.declarationList.declarations[0];
+
+			if (declaration && isVariableDeclaration(declaration)) {
+				const name = declaration.name.getText();
+
+				if (name) {
+					definition[name] = {
+						enum: Object.values(typeChecker.getTypeAtLocation(declaration).getProperties()).map((prop) =>
+							prop.getName()
+						),
+					};
 				}
 			}
 		}

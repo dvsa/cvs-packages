@@ -63,8 +63,15 @@ describe('Generation of models', () => {
 		const schemaObject = await typescriptToOpenApiSpec.generateByName(interfaceName);
 
 		expect(schemaObject).toEqual({
+			DecConst: {
+				enum: ['A', 'B'],
+				type: 'string',
+			},
 			Model1: {
 				properties: {
+					decConst: {
+						$ref: '#/components/schemas/DecConst',
+					},
 					prop1: {
 						type: 'string',
 					},
@@ -78,7 +85,7 @@ describe('Generation of models', () => {
 						$ref: '#/components/schemas/Model3',
 					},
 				},
-				required: ['prop1', 'prop2', 'prop3', 'propMod3'],
+				required: ['prop1', 'prop2', 'prop3', 'propMod3', 'decConst'],
 				type: 'object',
 			},
 			Model3: {
