@@ -1,6 +1,6 @@
 {
   "name": "@dvsa/business-events",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A package to help manage business events in a domain context.",
   "author": "DVSA",
   "license": "ISC",
@@ -39,8 +39,6 @@
     "@dvsa/biome-config": "0.1.0",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.14.2",
-    "@typescript-eslint/eslint-plugin": "^7.12.0",
-    "@typescript-eslint/parser": "^7.12.0",
     "aws-sdk-client-mock": "^4.0.1",
     "aws-sdk-client-mock-jest": "^4.0.1",
     "husky": "^9.0.2",
