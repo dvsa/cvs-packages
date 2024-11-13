@@ -33,8 +33,8 @@ export interface Model5 {
 }
 
 export declare const DecConst: {
-	readonly A: "A";
-	readonly B: "B";
+	readonly A: 'A';
+	readonly B: 'B';
 };
 
 export type DecConst = (typeof DecConst)[keyof typeof DecConst];
