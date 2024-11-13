@@ -3,6 +3,7 @@ export interface Model1 {
 	prop2: number;
 	prop3: boolean;
 	propMod3: Model3;
+	decConst: DecConst;
 }
 
 export interface Model2 {
@@ -30,3 +31,10 @@ export interface Model5 {
 	prop14: number;
 	prop15: boolean;
 }
+
+export declare const DecConst: {
+	readonly A: 'A';
+	readonly B: 'B';
+};
+
+export type DecConst = (typeof DecConst)[keyof typeof DecConst];
