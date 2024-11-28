@@ -38,8 +38,9 @@ export class BusinessEventPublisher {
 		config: Partial<SNSClientConfig> = BusinessEventPublisher.defaultConfig
 	) {
 		try {
-			const validator = new BusinessEventValidator(payload);
-			validator.validate();
+			const businessEvent = new BusinessEventValidator(payload);
+
+			businessEvent.validate();
 
 			return BusinessEventPublisher.getClient(config).send(payload.command);
 		} catch (error) {
