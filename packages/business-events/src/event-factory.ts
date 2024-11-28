@@ -6,7 +6,7 @@ import { BusinessEvent } from './business-event';
  * from common event types (SQS record, Api proxy requests).
  */
 export class EventFactory {
-	protected constructor(public correlationId: string) {}
+	protected constructor(private readonly correlationId: string) {}
 
 	/**
 	 * Creates an event factory and initialises it from an SQS record.
