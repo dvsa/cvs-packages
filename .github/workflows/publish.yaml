@@ -12,7 +12,7 @@ on:
         required: true
         type: choice
         options:
-          - 'common'
+          - 'cvs-common'
           - 'feature-flags'
           - 'service-bundler'
           - 'aws-utils'
@@ -29,7 +29,7 @@ jobs:
     name: Orchestrator
     runs-on: ubuntu-latest
     outputs:
-      publish-common: ${{ steps.changed-common.outputs.any_changed == 'true' || null }}
+      publish-cvs-common: ${{ steps.changed-cvs-common.outputs.any_changed == 'true' || null }}
       publish-feature-flags: ${{ steps.changed-feat-flags.outputs.any_changed == 'true' || null }}
       publish-service-bundler: ${{ steps.changed-service-bundler.outputs.any_changed == 'true' || null }}
       publish-aws-utils: ${{ steps.changed-aws-utils.outputs.any_changed == 'true' || null }}
@@ -43,12 +43,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Check for `/packages/common` changes
+      - name: Check for `/packages/cvs-common` changes
         uses: tj-actions/changed-files@v45
-        id: changed-common
+        id: changed-cvs-common
         with:
           files: |
-            packages/common/**
+            packages/cvs-common/**
 
       - name: Check for `/packages/feature-flags` changes
         uses: tj-actions/changed-files@v45
@@ -99,19 +99,19 @@ jobs:
           files: |
             packages/openapi-schema-generator/**      
 
-  publish-common:
+  publish-cvs-common:
     needs: orchestrator
     runs-on: ubuntu-latest
-    if: ${{ needs.orchestrator.outputs.publish-common || github.event_name == 'workflow_dispatch' && inputs.package == 'common'}}
+    if: ${{ needs.orchestrator.outputs.publish-cvs-common || github.event_name == 'workflow_dispatch' && inputs.package == 'cvs-common'}}
     steps:
       - name: 📨 Checkout
         uses: actions/checkout@v4
 
-      - name: Publish package "packages/common" ${{ inputs.dry-run && 'in' || 'not in' }} dry run mode
+      - name: Publish package "packages/cvs-common" ${{ inputs.dry-run && 'in' || 'not in' }} dry run mode
         uses: ./.github/actions/publish-package
         with:
           dry-run: ${{ inputs.dry-run && 'true' || 'false' }}
-          package-path: 'packages/common'
+          package-path: 'packages/cvs-common'
           token: ${{ secrets.NPM_AUTH_TOKEN }}
 
   publish-feature-flags:

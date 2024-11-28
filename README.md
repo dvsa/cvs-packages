@@ -1,6 +1,6 @@
-# CVS Packages
+# AppDev Packages
 
-A mono-repository for Commercial Vehicle Services (**CVS**) packages.
+A mono-repository for AppDev packages.
 
 The components can be found in the `packages/*` directory.
 
