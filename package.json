@@ -1,6 +1,6 @@
 {
-  "name": "cvs-packages",
-  "description": "Packages to be used in CVS microservices",
+  "name": "appdev-packages",
+  "description": "Packages to be used in AppDev microservices",
   "keywords": [
     "typescript",
     "nodejs"
