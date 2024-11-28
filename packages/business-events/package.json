@@ -30,7 +30,7 @@
     "postpublish": "git clean -fd"
   },
   "dependencies": {
-    "@aws-sdk/client-sns": "^3.620.0",
+    "@aws-sdk/client-sns": "^3.699.0",
     "@aws-sdk/credential-providers": "^3.620.0",
     "aws-xray-sdk": "^3.9.0"
   },
