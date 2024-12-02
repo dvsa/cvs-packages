@@ -10,8 +10,7 @@
   "description": "Utils library for common API functionality",
   "scripts": {
     "lint": "biome check src",
-    "lint:fix": "npm run lint -- --write",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint:fix": "npm run lint -- --write"
   },
   "dependencies": {
     "jose": "^5.9.6"
