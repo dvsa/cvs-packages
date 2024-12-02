@@ -47,12 +47,18 @@ type SpecificOpenAPISchemaObject =
 	| OpenAPIEnumSchemaObject<unknown>;
 
 export class TypescriptToOpenApiSpec {
+	/**
+	 * Path to the file containing TypeScript interfaces
+	 */
 	private readonly pathToFile: string;
 
 	public constructor(pathToFile: string) {
 		this.pathToFile = pathToFile;
 	}
 
+	/**
+	 * Generate many OpenAPI schemas from TypeScript interfaces
+	 */
 	async generateMany(): Promise<OpenAPIObjectSchemaObject> {
 		const definitions = this.extractDefinitions(this.pathToFile);
 		const schemas = Object.fromEntries(
@@ -61,6 +67,10 @@ export class TypescriptToOpenApiSpec {
 		return this.dereferenceArrays(schemas) as unknown as OpenAPIObjectSchemaObject;
 	}
 
+	/**
+	 * Generate a single OpenAPI schema from a TypeScript interface
+	 * @param interfaceName
+	 */
 	async generateByName(interfaceName: string): Promise<OpenAPIObjectSchemaObject> {
 		const definitions = this.extractDefinitions(this.pathToFile, interfaceName);
 		const referencedModels = this.findReferencedModels(
@@ -76,6 +86,17 @@ export class TypescriptToOpenApiSpec {
 		return this.dereferenceArrays(schemas) as unknown as OpenAPIObjectSchemaObject;
 	}
 
+	/**
+	 * Recursively find all referenced models in a schema
+	 * e.g.
+	 * - interface A { prop: B }
+	 * - interface B { prop: C }
+	 * - This will return a set containing A, B, and C definitions
+	 * @param schema
+	 * @param definitions
+	 * @param referencedModels
+	 * @private
+	 */
 	private findReferencedModels(
 		schema: SchemaObject,
 		definitions: Record<string, SchemaObject>,
@@ -112,6 +133,12 @@ export class TypescriptToOpenApiSpec {
 		return referencedModels;
 	}
 
+	/**
+	 * Dereference arrays in the schema
+	 * @param {Record<string, SpecificOpenAPISchemaObject>} obj
+	 * @returns {Record<string, SpecificOpenAPISchemaObject>}
+	 * @private
+	 */
 	private dereferenceArrays(
 		obj: Record<string, SpecificOpenAPISchemaObject>
 	): Record<string, SpecificOpenAPISchemaObject> {
@@ -147,6 +174,12 @@ export class TypescriptToOpenApiSpec {
 		return result;
 	}
 
+	/**
+	 * Convert TypeScript interface to OpenAPI schema
+	 * @param {Record<string, string>} interfaceObj
+	 * @returns {OpenAPIObjectSchemaObject}
+	 * @private
+	 */
 	private dictToOpenAPI(
 		interfaceObj: Record<string, string>
 	): OpenAPIObjectSchemaObject | OpenAPIEnumSchemaObject<unknown> {
@@ -191,6 +224,12 @@ export class TypescriptToOpenApiSpec {
 		};
 	}
 
+	/**
+	 * Convert TypeScript type to OpenAPI schema object
+	 * @param {string} value
+	 * @returns {SchemaObject | OpenAPIRefSchemaObject}
+	 * @private
+	 */
 	private typeToSchemaObject(value: string | unknown): SchemaObject | OpenAPIRefSchemaObject {
 		if (typeof value === 'string' && value.endsWith('[]')) {
 			return {
@@ -209,6 +248,13 @@ export class TypescriptToOpenApiSpec {
 		}
 	}
 
+	/**
+	 * Extract definition from the TypeScript file and convert to a dictionary
+	 * @param {string} filePath
+	 * @param {string} interfaceName - optional name if only requesting a single interface to be converted
+	 * @returns {Record<string, Record<string, string>>}
+	 * @private
+	 */
 	private extractDefinitions(filePath: string, interfaceName?: string): Record<string, Record<string, string>> {
 		const program = createProgram([filePath], {});
 		const sourceFile = program.getSourceFile(filePath);
@@ -226,6 +272,13 @@ export class TypescriptToOpenApiSpec {
 		return definitions;
 	}
 
+	/**
+	 * Visit each node in the TypeScript AST and extract interfaces
+	 * @param {TypescriptNode} node
+	 * @param {TypeChecker} typeChecker
+	 * @param {Record<string, Record<string, string>>} definition
+	 * @private
+	 */
 	private visitNode(
 		node: TypescriptNode,
 		typeChecker: TypeChecker,
@@ -256,7 +309,9 @@ export class TypescriptToOpenApiSpec {
 					),
 				};
 			}
-		} else if (isVariableStatement(node)) {
+		}
+		// Add handling for const declarations
+		else if (isVariableStatement(node)) {
 			const declaration = node.declarationList.declarations[0];
 
 			if (declaration && isVariableDeclaration(declaration)) {
