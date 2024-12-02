@@ -12,6 +12,7 @@ on:
         required: true
         type: choice
         options:
+          - 'appdev-common'
           - 'cvs-common'
           - 'feature-flags'
           - 'service-bundler'
@@ -30,6 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       publish-cvs-common: ${{ steps.changed-cvs-common.outputs.any_changed == 'true' || null }}
+      publish-appdev-common: ${{ steps.changed-appdev-common.outputs.any_changed == 'true' || null }}
       publish-feature-flags: ${{ steps.changed-feat-flags.outputs.any_changed == 'true' || null }}
       publish-service-bundler: ${{ steps.changed-service-bundler.outputs.any_changed == 'true' || null }}
       publish-aws-utils: ${{ steps.changed-aws-utils.outputs.any_changed == 'true' || null }}
@@ -49,6 +51,13 @@ jobs:
         with:
           files: |
             packages/cvs-common/**
+
+      - name: Check for `/packages/appdev-common` changes
+        uses: tj-actions/changed-files@v45
+        id: changed-appdev-common
+        with:
+          files: |
+            packages/appdev-common/**
 
       - name: Check for `/packages/feature-flags` changes
         uses: tj-actions/changed-files@v45
@@ -112,6 +121,21 @@ jobs:
         with:
           dry-run: ${{ inputs.dry-run && 'true' || 'false' }}
           package-path: 'packages/cvs-common'
+          token: ${{ secrets.NPM_AUTH_TOKEN }}
+
+  publish-appdev-common:
+    needs: orchestrator
+    runs-on: ubuntu-latest
+    if: ${{ needs.orchestrator.outputs.publish-appdev-common || github.event_name == 'workflow_dispatch' && inputs.package == 'appdev-common'}}
+    steps:
+      - name: 📨 Checkout
+        uses: actions/checkout@v4
+
+      - name: Publish package "packages/appdev-common" ${{ inputs.dry-run && 'in' || 'not in' }} dry run mode
+        uses: ./.github/actions/publish-package
+        with:
+          dry-run: ${{ inputs.dry-run && 'true' || 'false' }}
+          package-path: 'packages/appdev-common'
           token: ${{ secrets.NPM_AUTH_TOKEN }}
 
   publish-feature-flags:
