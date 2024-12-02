@@ -1,6 +1,6 @@
 {
   "name": "@dvsa/aws-utilities",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Helper library for simplifying and standardising usage of AWS clients",
   "author": "DVSA",
   "license": "ISC",
@@ -29,6 +29,7 @@
     "postpublish": "git clean -fd && npm run clean:temp"
   },
   "dependencies": {
+    "aws-xray-sdk": "^3.10.2",
     "js-yaml": "^4.1.0"
   },
   "peerDependencies": {
@@ -40,8 +41,7 @@
     "@aws-sdk/client-rekognition": "^3.699.0",
     "@aws-sdk/credential-providers": "^3.699.0",
     "@aws-sdk/lib-dynamodb": "^3.699.0",
-    "@aws-sdk/util-dynamodb": "^3.699.0",
-    "aws-xray-sdk": "^3.10.2"
+    "@aws-sdk/util-dynamodb": "^3.699.0"
   },
   "peerDependenciesMeta": {
     "@aws-sdk/client-cloudwatch-logs": { "optional": true },
@@ -52,8 +52,7 @@
     "@aws-sdk/client-rekognition": { "optional": true },
     "@aws-sdk/credential-providers": { "optional": true },
     "@aws-sdk/lib-dynamodb": { "optional": true },
-    "@aws-sdk/util-dynamodb": { "optional": true },
-    "aws-xray-sdk": { "optional": true }
+    "@aws-sdk/util-dynamodb": { "optional": true }
   },
   "devDependencies": {
     "@biomejs/biome": "1.8.3",
