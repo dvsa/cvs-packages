@@ -23,8 +23,10 @@ export class S3Storage {
 			config.credentials = fromIni();
 		}
 
+		const client = new S3Client(config);
+
 		// If tracing is enabled, then capture the client with AWS X-Ray
-		return process.env._X_AMZN_TRACE_ID ? captureAWSv3Client(new S3Client(config)) : new S3Client(config);
+		return process.env._X_AMZN_TRACE_ID ? captureAWSv3Client(client) : client;
 	}
 
 	/**

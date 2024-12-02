@@ -26,12 +26,12 @@ export class DynamoDb {
 			clientConfig.endpoint = process.env.DDB_OFFLINE_ENDPOINT;
 		}
 
-		// If tracing is enabled, then capture the client with AWS X-Ray
-		const client = process.env._X_AMZN_TRACE_ID
-			? captureAWSv3Client(new DynamoDBClient(clientConfig))
-			: new DynamoDBClient(clientConfig);
+		const client = new DynamoDBClient(clientConfig);
 
-		return DynamoDBDocumentClient.from(client);
+		// If tracing is enabled, then capture the client with AWS X-Ray
+		const dynamoDBClient = process.env._X_AMZN_TRACE_ID ? captureAWSv3Client(client) : client;
+
+		return DynamoDBDocumentClient.from(dynamoDBClient);
 	}
 
 	/**

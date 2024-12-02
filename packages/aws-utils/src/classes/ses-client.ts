@@ -34,8 +34,10 @@ export class SimpleEmailService {
 			config.credentials = fromIni();
 		}
 
+		const client = new SESClient(config);
+
 		// If tracing is enabled, then capture the client with AWS X-Ray
-		return process.env._X_AMZN_TRACE_ID ? captureAWSv3Client(new SESClient(config)) : new SESClient(config);
+		return process.env._X_AMZN_TRACE_ID ? captureAWSv3Client(client) : client;
 	}
 
 	/**
