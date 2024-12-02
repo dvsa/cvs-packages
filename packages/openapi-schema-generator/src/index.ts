@@ -209,10 +209,7 @@ export class TypescriptToOpenApiSpec {
 		}
 	}
 
-	private extractDefinitions(
-		filePath: string,
-		interfaceName?: string
-	): Record<string, Record<string, string>> {
+	private extractDefinitions(filePath: string, interfaceName?: string): Record<string, Record<string, string>> {
 		const program = createProgram([filePath], {});
 		const sourceFile = program.getSourceFile(filePath);
 		const definitions: Record<string, Record<string, string>> = {};
