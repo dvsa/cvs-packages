@@ -47,61 +47,35 @@ type SpecificOpenAPISchemaObject =
 	| OpenAPIEnumSchemaObject<unknown>;
 
 export class TypescriptToOpenApiSpec {
-	/**
-	 * Path to the file containing TypeScript interfaces
-	 */
 	private readonly pathToFile: string;
 
 	public constructor(pathToFile: string) {
 		this.pathToFile = pathToFile;
 	}
 
-	/**
-	 * Generate many OpenAPI schemas from TypeScript interfaces
-	 */
 	async generateMany(): Promise<OpenAPIObjectSchemaObject> {
 		const definitions = this.extractDefinitions(this.pathToFile);
-
 		const schemas = Object.fromEntries(
 			Object.entries(definitions).map(([name, def]) => [name, this.dictToOpenAPI(def)])
 		);
-
 		return this.dereferenceArrays(schemas) as unknown as OpenAPIObjectSchemaObject;
 	}
 
-	/**
-	 * Generate a single OpenAPI schema from a TypeScript interface
-	 * @param interfaceName
-	 */
 	async generateByName(interfaceName: string): Promise<OpenAPIObjectSchemaObject> {
 		const definitions = this.extractDefinitions(this.pathToFile, interfaceName);
-
 		const referencedModels = this.findReferencedModels(
 			definitions[interfaceName],
 			definitions,
 			new Set([interfaceName])
 		);
-
 		const schemas = Object.fromEntries(
 			Object.entries(definitions)
 				.map(([name, def]) => [name, this.dictToOpenAPI(def)])
 				.filter(([name]) => typeof name === 'string' && referencedModels.has(name))
 		);
-
 		return this.dereferenceArrays(schemas) as unknown as OpenAPIObjectSchemaObject;
 	}
 
-	/**
-	 * Recursively find all referenced models in a schema
-	 * e.g.
-	 * - interface A { prop: B }
-	 * - interface B { prop: C }
-	 * - This will return a set containing A, B, and C definitions
-	 * @param schema
-	 * @param definitions
-	 * @param referencedModels
-	 * @private
-	 */
 	private findReferencedModels(
 		schema: SchemaObject,
 		definitions: Record<string, SchemaObject>,
@@ -124,10 +98,12 @@ export class TypescriptToOpenApiSpec {
 		for (const [, value] of Object.entries(schema ?? {})) {
 			if (!primitiveTypes.includes(value)) {
 				if (value && !referencedModels.has(value)) {
-					referencedModels.add(value);
+					// Clean up union types by taking the first non-undefined type
+					const cleanValue = value.toString().split('|')[0].trim();
+					referencedModels.add(cleanValue);
 
-					if (definitions[value]) {
-						this.findReferencedModels(definitions[value], definitions, referencedModels);
+					if (definitions[cleanValue]) {
+						this.findReferencedModels(definitions[cleanValue], definitions, referencedModels);
 					}
 				}
 			}
@@ -136,12 +112,6 @@ export class TypescriptToOpenApiSpec {
 		return referencedModels;
 	}
 
-	/**
-	 * Dereference arrays in the schema
-	 * @param {Record<string, SpecificOpenAPISchemaObject>} obj
-	 * @returns {Record<string, SpecificOpenAPISchemaObject>}
-	 * @private
-	 */
 	private dereferenceArrays(
 		obj: Record<string, SpecificOpenAPISchemaObject>
 	): Record<string, SpecificOpenAPISchemaObject> {
@@ -177,12 +147,6 @@ export class TypescriptToOpenApiSpec {
 		return result;
 	}
 
-	/**
-	 * Convert TypeScript interface to OpenAPI schema
-	 * @param {Record<string, string>} interfaceObj
-	 * @returns {OpenAPIObjectSchemaObject}
-	 * @private
-	 */
 	private dictToOpenAPI(
 		interfaceObj: Record<string, string>
 	): OpenAPIObjectSchemaObject | OpenAPIEnumSchemaObject<unknown> {
@@ -192,28 +156,32 @@ export class TypescriptToOpenApiSpec {
 		for (const [key, value] of Object.entries(interfaceObj)) {
 			const isRequired = !key.endsWith('?');
 			const propertyName = isRequired ? key : key.slice(0, -1);
+			let val = typeof value === 'string' ? value.replace(' | undefined', '') : value;
 
-			if (isRequired) {
-				required.push(propertyName);
-			}
-
-			// if it's an array, it likely is a
-			if (Array.isArray(value)) {
-				const val: unknown[] = value;
-
-				const calcType = val.every((val) => typeof val === 'boolean')
+			if (Array.isArray(val)) {
+				const arrayVal: unknown[] = val;
+				const calcType = arrayVal.every((val) => typeof val === 'boolean')
 					? 'boolean'
-					: val.every((val) => typeof val === 'number')
+					: arrayVal.every((val) => typeof val === 'number')
 						? 'number'
 						: 'string';
 
 				return {
 					type: calcType,
-					enum: value,
+					enum: val,
 				};
 			}
-			// otherwise calculate the type based on the structure
-			properties[propertyName] = this.typeToSchemaObject(value);
+
+			// Handle union types by taking the first non-undefined type
+			if (typeof val === 'string' && val.includes('|')) {
+				val = val.split('|')[0].trim();
+			}
+
+			if (isRequired) {
+				required.push(propertyName);
+			}
+
+			properties[propertyName] = this.typeToSchemaObject(val);
 		}
 
 		return {
@@ -223,12 +191,6 @@ export class TypescriptToOpenApiSpec {
 		};
 	}
 
-	/**
-	 * Convert TypeScript type to OpenAPI schema object
-	 * @param {string} value
-	 * @returns {SchemaObject | OpenAPIRefSchemaObject}
-	 * @private
-	 */
 	private typeToSchemaObject(value: string | unknown): SchemaObject | OpenAPIRefSchemaObject {
 		if (typeof value === 'string' && value.endsWith('[]')) {
 			return {
@@ -247,14 +209,10 @@ export class TypescriptToOpenApiSpec {
 		}
 	}
 
-	/**
-	 * Extract definition from the TypeScript file and convert to a dictionary
-	 * @param {string} filePath
-	 * @param {string} interfaceName - optional name if only requesting a single interface to be converted
-	 * @returns {Record<string, Record<string, string>>}
-	 * @private
-	 */
-	private extractDefinitions(filePath: string, interfaceName?: string): Record<string, Record<string, string>> {
+	private extractDefinitions(
+		filePath: string,
+		interfaceName?: string
+	): Record<string, Record<string, string>> {
 		const program = createProgram([filePath], {});
 		const sourceFile = program.getSourceFile(filePath);
 		const definitions: Record<string, Record<string, string>> = {};
@@ -271,13 +229,6 @@ export class TypescriptToOpenApiSpec {
 		return definitions;
 	}
 
-	/**
-	 * Visit each node in the TypeScript AST and extract interfaces
-	 * @param {TypescriptNode} node
-	 * @param {TypeChecker} typeChecker
-	 * @param {Record<string, Record<string, string>>} definition
-	 * @private
-	 */
 	private visitNode(
 		node: TypescriptNode,
 		typeChecker: TypeChecker,
@@ -292,19 +243,15 @@ export class TypescriptToOpenApiSpec {
 
 				for (const member of node.members) {
 					if ((isPropertySignature(member) || isPropertyDeclaration(member)) && member.type) {
-						const propertyName = member.name.getText();
+						const propertyName = member.name.getText() + (member.questionToken ? '?' : '');
 						definition[name][propertyName] = member.type.getText();
 					}
 				}
 			}
-		}
-
-		// Add handling for type declarations
-		else if (isTypeAliasDeclaration(node)) {
+		} else if (isTypeAliasDeclaration(node)) {
 			const name = node.name.getText();
 			definition[name] = definition[name] ?? {};
 
-			// If it's a union type of string literals (enum-like)
 			if (isUnionTypeNode(node.type)) {
 				definition[name] = {
 					enum: node.type.types.map((t) =>
@@ -312,10 +259,7 @@ export class TypescriptToOpenApiSpec {
 					),
 				};
 			}
-		}
-
-		// Add handling for const declarations
-		else if (isVariableStatement(node)) {
+		} else if (isVariableStatement(node)) {
 			const declaration = node.declarationList.declarations[0];
 
 			if (declaration && isVariableDeclaration(declaration)) {

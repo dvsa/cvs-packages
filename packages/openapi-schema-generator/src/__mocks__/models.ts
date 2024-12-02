@@ -4,6 +4,7 @@ export interface Model1 {
 	prop3: boolean;
 	propMod3: Model3;
 	decConst: DecConst;
+	optionalProp?: Model6 | undefined;
 }
 
 export interface Model2 {
@@ -30,6 +31,12 @@ export interface Model5 {
 	prop13: string;
 	prop14: number;
 	prop15: boolean;
+}
+
+export interface Model6 {
+	prop16: string;
+	prop17: number;
+	prop18: boolean;
 }
 
 export declare const DecConst: {
