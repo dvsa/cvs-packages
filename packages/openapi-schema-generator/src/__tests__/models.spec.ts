@@ -72,6 +72,9 @@ describe('Generation of models', () => {
 					decConst: {
 						$ref: '#/components/schemas/DecConst',
 					},
+					optionalProp: {
+						$ref: '#/components/schemas/Model6',
+					},
 					prop1: {
 						type: 'string',
 					},
@@ -137,6 +140,21 @@ describe('Generation of models', () => {
 					},
 				},
 				required: ['prop13', 'prop14', 'prop15'],
+				type: 'object',
+			},
+			Model6: {
+				properties: {
+					prop16: {
+						type: 'string',
+					},
+					prop17: {
+						type: 'number',
+					},
+					prop18: {
+						type: 'boolean',
+					},
+				},
+				required: ['prop16', 'prop17', 'prop18'],
 				type: 'object',
 			},
 		});
