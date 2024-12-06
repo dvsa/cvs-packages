@@ -4,10 +4,10 @@ import { getFeatureFlags } from '../feature-flags';
 
 const defaultFeatureFlags = {
 	welshTranslation: {
-		enabled: false,
-		translatePassTestResult: false,
-		translateFailTestResult: false,
-		translatePrsTestResult: false,
+		enabled: true,
+		translatePassTestResult: true,
+		translateFailTestResult: true,
+		translatePrsTestResult: true,
 	},
 	issueDocsCentrally: {
 		enabled: true,
@@ -18,6 +18,9 @@ const defaultFeatureFlags = {
 	automatedCt: {
 		enabled: false,
 	},
+	abandonedCerts: {
+		enabled: false,
+	}
 };
 
 export type FeatureFlags = typeof defaultFeatureFlags;

@@ -14,11 +14,14 @@ describe('app config configuration', () => {
 
 		const flags = await getProfile();
 
-		expect(flags.welshTranslation.enabled).toBe(false);
-		expect(flags.welshTranslation.translatePassTestResult).toBe(false);
+		expect(flags.welshTranslation.enabled).toBe(true);
+		expect(flags.welshTranslation.translatePassTestResult).toBe(true);
+		expect(flags.welshTranslation.translateFailTestResult).toBe(true);
+		expect(flags.welshTranslation.translatePrsTestResult).toBe(true);
 		expect(flags.issueDocsCentrally.enabled).toBe(true);
 		expect(flags.recallsApi.enabled).toBe(false);
 		expect(flags.automatedCt.enabled).toBe(false);
+		expect(flags.abandonedCerts.enabled).toBe(false);
 	});
 
 	it('should override some flags with a partial response', async () => {
@@ -36,6 +39,9 @@ describe('app config configuration', () => {
 			automatedCt: {
 				enabled: true,
 			},
+			abandonedCerts: {
+				enabled: true,
+			}
 		};
 
 		getAppConfig.mockReturnValue(expectedFlags);
@@ -44,9 +50,11 @@ describe('app config configuration', () => {
 
 		expect(flags.welshTranslation.enabled).toBe(true);
 		expect(flags.welshTranslation.translatePassTestResult).toBe(true);
-		expect(flags.welshTranslation.translateFailTestResult).toBe(false);
+		expect(flags.welshTranslation.translateFailTestResult).toBe(true);
+		expect(flags.welshTranslation.translatePrsTestResult).toBe(true);
 		expect(flags.issueDocsCentrally.enabled).toBe(false);
 		expect(flags.recallsApi.enabled).toBe(true);
 		expect(flags.automatedCt.enabled).toBe(true);
+		expect(flags.abandonedCerts.enabled).toBe(true);
 	});
 });
