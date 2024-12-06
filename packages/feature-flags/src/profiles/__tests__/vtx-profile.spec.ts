@@ -41,7 +41,7 @@ describe('app config configuration', () => {
 			},
 			abandonedCerts: {
 				enabled: true,
-			}
+			},
 		};
 
 		getAppConfig.mockReturnValue(expectedFlags);

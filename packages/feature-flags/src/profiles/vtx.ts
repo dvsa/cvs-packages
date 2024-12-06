@@ -20,7 +20,7 @@ const defaultFeatureFlags = {
 	},
 	abandonedCerts: {
 		enabled: false,
-	}
+	},
 };
 
 export type FeatureFlags = typeof defaultFeatureFlags;
