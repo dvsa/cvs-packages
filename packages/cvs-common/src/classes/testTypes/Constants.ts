@@ -303,5 +303,5 @@ export const ABANDONED_TEST = {
 		'179',
 		'181',
 		'182',
-	]
-}
+	],
+};
