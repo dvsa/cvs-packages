@@ -1,6 +1,6 @@
 {
   "name": "@dvsa/aws-utilities",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Helper library for simplifying and standardising usage of AWS clients",
   "author": "DVSA",
   "license": "ISC",
@@ -33,15 +33,15 @@
     "js-yaml": "^4.1.0"
   },
   "peerDependencies": {
-    "@aws-sdk/client-cloudwatch-logs": "^3.699.0",
-    "@aws-sdk/client-dynamodb": "^3.699.0",
-    "@aws-sdk/client-s3": "^3.699.0",
-    "@aws-sdk/client-secrets-manager": "^3.699.0",
-    "@aws-sdk/client-ses": "^3.699.0",
-    "@aws-sdk/client-rekognition": "^3.699.0",
-    "@aws-sdk/credential-providers": "^3.699.0",
-    "@aws-sdk/lib-dynamodb": "^3.699.0",
-    "@aws-sdk/util-dynamodb": "^3.699.0"
+    "@aws-sdk/client-cloudwatch-logs": ">=3.699.0 <4.0.0",
+    "@aws-sdk/client-dynamodb": ">=3.699.0 <4.0.0",
+    "@aws-sdk/client-s3": ">=3.699.0 <4.0.0",
+    "@aws-sdk/client-secrets-manager": ">=3.699.0 <4.0.0",
+    "@aws-sdk/client-ses": ">=3.699.0 <4.0.0",
+    "@aws-sdk/client-rekognition": ">=3.699.0 <4.0.0",
+    "@aws-sdk/credential-providers": ">=3.699.0 <4.0.0",
+    "@aws-sdk/lib-dynamodb": ">=3.699.0 <4.0.0",
+    "@aws-sdk/util-dynamodb": ">=3.699.0 <4.0.0"
   },
   "peerDependenciesMeta": {
     "@aws-sdk/client-cloudwatch-logs": { "optional": true },
