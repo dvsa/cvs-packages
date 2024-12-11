@@ -1,5 +1,5 @@
 import {
-	ABANDONED_TEST,
+	VTG_VTP_12_TEST,
 	ADR_TEST,
 	ANNUAL_WITH_CERTIFICATE,
 	BASIC_IVA_TEST,
@@ -25,7 +25,7 @@ describe('validateTestTypeIdInList', () => {
 		const resultProhibitionClearance = TestTypeHelper.validateTestTypeIdInList(PROHIBITION_CLEARANCE_TEST, '70');
 		const resultAnnualWithCertificate = TestTypeHelper.validateTestTypeIdInList(ANNUAL_WITH_CERTIFICATE, '1');
 		const resultCentralDocs = TestTypeHelper.validateTestTypeIdInList(CENTRAL_DOCS_TEST, '50');
-		const resultAbandonedTest = TestTypeHelper.validateTestTypeIdInList(ABANDONED_TEST, '1');
+		const resultAbandonedTest = TestTypeHelper.validateTestTypeIdInList(VTG_VTP_12_TEST, '1');
 
 		expect(resultLEC).toBe(true);
 		expect(resultADR).toBe(true);
@@ -51,7 +51,7 @@ describe('validateTestTypeIdInList', () => {
 		const resultProhibitionClearance = TestTypeHelper.validateTestTypeIdInList(PROHIBITION_CLEARANCE_TEST, '0');
 		const resultAnnualWithCertificate = TestTypeHelper.validateTestTypeIdInList(ANNUAL_WITH_CERTIFICATE, '0');
 		const resultCentralDocs = TestTypeHelper.validateTestTypeIdInList(CENTRAL_DOCS_TEST, '0');
-		const resultAbandonedTest = TestTypeHelper.validateTestTypeIdInList(ABANDONED_TEST, '0');
+		const resultAbandonedTest = TestTypeHelper.validateTestTypeIdInList(VTG_VTP_12_TEST, '0');
 
 		expect(resultLEC).toBe(false);
 		expect(resultADR).toBe(false);

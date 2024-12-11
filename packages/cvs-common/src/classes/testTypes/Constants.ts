@@ -210,7 +210,7 @@ export const CENTRAL_DOCS_TEST = {
 	],
 };
 
-export const ABANDONED_TEST = {
+export const VTG_VTP_12_TEST = {
 	IDS: [
 		'1',
 		'3',
