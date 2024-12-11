@@ -1,5 +1,4 @@
 import {
-	VTG_VTP_12_TEST,
 	ADR_TEST,
 	ANNUAL_WITH_CERTIFICATE,
 	BASIC_IVA_TEST,
@@ -10,6 +9,7 @@ import {
 	MSVA_TEST,
 	PROHIBITION_CLEARANCE_TEST,
 	TIR_TEST,
+	VTG_VTP_12_TEST,
 } from '../Constants';
 import { TestTypeHelper } from '../testTypeHelper';
 
