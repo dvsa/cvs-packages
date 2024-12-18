@@ -1,5 +1,7 @@
 import { type SchemaObject } from 'openapi3-ts/oas30';
 import {
+	type TypeChecker,
+	type Node as TypescriptNode,
 	createProgram,
 	forEachChild,
 	isClassDeclaration,
@@ -11,8 +13,6 @@ import {
 	isUnionTypeNode,
 	isVariableDeclaration,
 	isVariableStatement,
-	type Node as TypescriptNode,
-	type TypeChecker,
 } from 'typescript';
 
 type OpenAPIDataType = 'string' | 'number' | 'boolean' | 'object' | 'array';
