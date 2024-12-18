@@ -1,3 +1,4 @@
+import { join } from 'node:path';
 import { type SchemaObject } from 'openapi3-ts/oas30';
 import {
 	type TypeChecker,
@@ -48,6 +49,11 @@ type SpecificOpenAPISchemaObject =
 	| OpenAPIRefSchemaObject
 	| OpenAPIEnumSchemaObject<unknown>;
 
+export interface SchemaPath {
+	path: string;
+	interfaceName?: string;
+}
+
 export class TypescriptToOpenApiSpec {
 	/**
 	 * Path to the file containing TypeScript interfaces
@@ -56,6 +62,44 @@ export class TypescriptToOpenApiSpec {
 
 	public constructor(pathToFile: string) {
 		this.pathToFile = pathToFile;
+	}
+
+	/**
+	 * Generate OpenAPI schemas for all interfaces in a file
+	 * @param paths
+	 */
+	static async generateNamedSchemas(paths: SchemaPath[]): Promise<Record<string, unknown>> {
+		const results = await Promise.all(
+			// loop over the paths and generate the schema for each interface
+			paths
+				// we only want to run the `generateByName` method for paths that have an interfaceName specified
+				.filter(({ interfaceName }) => !!interfaceName)
+				// create an array of promises to generate the schema for each interface
+				.map(({ path: modelPath, interfaceName }) =>
+					new TypescriptToOpenApiSpec(join(process.cwd(), modelPath)).generateByName(interfaceName as string)
+				)
+		);
+
+		// merge the results into a single object
+		return results.reduce((acc, curr) => Object.assign(acc, curr), {});
+	}
+
+	/**
+	 * Generate OpenAPI schemas for all interfaces in a file
+	 * @param paths
+	 */
+	static async generateUnnamedSchemas(paths: SchemaPath[]): Promise<Record<string, unknown>> {
+		const results = await Promise.all(
+			// loop over the paths and generate the schema for each file path
+			paths
+				// we only want to generate every interface in a file if no interfaceName is specified
+				.filter(({ interfaceName }) => !interfaceName)
+				// create an array of promises to generate the schema for all the file contents
+				.map(({ path: modelPath }) => new TypescriptToOpenApiSpec(join(process.cwd(), modelPath)).generateMany())
+		);
+
+		// merge the results into a single object
+		return results.reduce((acc, curr) => Object.assign(acc, curr), {});
 	}
 
 	/**
