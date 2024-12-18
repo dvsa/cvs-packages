@@ -5,10 +5,12 @@ import {
 	createProgram,
 	forEachChild,
 	isClassDeclaration,
+	isEnumDeclaration,
 	isInterfaceDeclaration,
 	isLiteralTypeNode,
 	isPropertyDeclaration,
 	isPropertySignature,
+	isStringLiteral,
 	isTypeAliasDeclaration,
 	isUnionTypeNode,
 	isVariableDeclaration,
@@ -285,6 +287,19 @@ export class TypescriptToOpenApiSpec {
 		typeChecker: TypeChecker,
 		definition: Record<string, Record<string, string | string[]>>
 	): void {
+		if (isEnumDeclaration(node)) {
+			const name = node.name.getText();
+			definition[name] = {
+				enum: node.members.map((member) => {
+					const initializer = member.initializer;
+					if (initializer && isStringLiteral(initializer)) {
+						return initializer.text;
+					}
+					return member.name.getText();
+				}),
+			};
+		}
+
 		if (isClassDeclaration(node) || isInterfaceDeclaration(node)) {
 			const symbol = node.name ? typeChecker.getSymbolAtLocation(node.name) : null;
 
