@@ -159,4 +159,27 @@ describe('Generation of models', () => {
 			},
 		});
 	});
+
+	it('should create schemas when the interface is extended', async () => {
+		const schemaObject = await typescriptToOpenApiSpec.generateByName('Model19');
+
+		expect(schemaObject).toEqual({
+			Model19: {
+				properties: {
+					prop19: {
+						type: 'string',
+					},
+					test: {
+						$ref: '#/components/schemas/Test',
+					},
+				},
+				required: ['test', 'prop19'],
+				type: 'object',
+			},
+			Test: {
+				enum: ['one', 'two', 'three'],
+				type: 'string',
+			},
+		});
+	});
 });

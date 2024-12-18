@@ -5,10 +5,12 @@ import {
 	createProgram,
 	forEachChild,
 	isClassDeclaration,
+	isEnumDeclaration,
 	isInterfaceDeclaration,
 	isLiteralTypeNode,
 	isPropertyDeclaration,
 	isPropertySignature,
+	isStringLiteral,
 	isTypeAliasDeclaration,
 	isUnionTypeNode,
 	isVariableDeclaration,
@@ -193,6 +195,7 @@ export class TypescriptToOpenApiSpec {
 
 			if (Array.isArray(val)) {
 				const arrayVal: unknown[] = val;
+
 				const calcType = arrayVal.every((val) => typeof val === 'boolean')
 					? 'boolean'
 					: arrayVal.every((val) => typeof val === 'number')
@@ -284,12 +287,39 @@ export class TypescriptToOpenApiSpec {
 		typeChecker: TypeChecker,
 		definition: Record<string, Record<string, string | string[]>>
 	): void {
-		if (isClassDeclaration(node) || isInterfaceDeclaration(node)) {
+		if (isEnumDeclaration(node)) {
+			const name = node.name.getText();
+			definition[name] = {
+				enum: node.members.map((member) => {
+					const initializer = member.initializer;
+					if (initializer && isStringLiteral(initializer)) {
+						return initializer.text;
+					}
+					return member.name.getText();
+				}),
+			};
+		} else if (isClassDeclaration(node) || isInterfaceDeclaration(node)) {
 			const symbol = node.name ? typeChecker.getSymbolAtLocation(node.name) : null;
 
 			if (symbol) {
 				const name = symbol.getName();
 				definition[name] = definition[name] ?? {};
+
+				// Handle inheritance
+				if (node.heritageClauses) {
+					for (const heritage of node.heritageClauses) {
+						for (const type of heritage.types) {
+							const baseTypeName = type.expression.getText();
+							if (definition[baseTypeName]) {
+								// Merge base interface properties
+								definition[name] = {
+									...definition[baseTypeName],
+									...definition[name],
+								};
+							}
+						}
+					}
+				}
 
 				for (const member of node.members) {
 					if ((isPropertySignature(member) || isPropertyDeclaration(member)) && member.type) {

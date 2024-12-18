@@ -45,3 +45,17 @@ export declare const DecConst: {
 };
 
 export type DecConst = (typeof DecConst)[keyof typeof DecConst];
+
+enum Test {
+	one = 'one',
+	two = 'two',
+	three = 'three',
+}
+
+interface TestInterface {
+	test: Test;
+}
+
+export interface Model19 extends TestInterface {
+	prop19: string;
+}
