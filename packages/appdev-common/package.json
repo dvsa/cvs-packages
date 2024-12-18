@@ -1,6 +1,6 @@
 {
   "name": "@dvsa/appdev-api-common",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "keywords": [
     "dvsa",
     "nodejs",
@@ -26,7 +26,7 @@
     "jose": "^5.9.6"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.8.3",
+    "@biomejs/biome": "1.9.3",
     "@dvsa/biome-config": "0.3.0",
     "@types/aws-lambda": "^8.10.145",
     "@types/express": "^5.0.0",
