@@ -68,7 +68,7 @@ export class TypescriptToOpenApiSpec {
 	 * Generate OpenAPI schemas for all interfaces in a file
 	 * @param paths
 	 */
-	async generateNamedSchemas(paths: SchemaPath[]): Promise<Record<string, unknown>> {
+	static async generateNamedSchemas(paths: SchemaPath[]): Promise<Record<string, unknown>> {
 		const results = await Promise.all(
 			// loop over the paths and generate the schema for each interface
 			paths
@@ -88,7 +88,7 @@ export class TypescriptToOpenApiSpec {
 	 * Generate OpenAPI schemas for all interfaces in a file
 	 * @param paths
 	 */
-	async generateUnnamedSchemas(paths: SchemaPath[]): Promise<Record<string, unknown>> {
+	static async generateUnnamedSchemas(paths: SchemaPath[]): Promise<Record<string, unknown>> {
 		const results = await Promise.all(
 			// loop over the paths and generate the schema for each file path
 			paths
