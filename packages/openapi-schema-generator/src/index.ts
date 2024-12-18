@@ -300,7 +300,7 @@ export class TypescriptToOpenApiSpec {
 			};
 		}
 
-		if (isClassDeclaration(node) || isInterfaceDeclaration(node)) {
+		else if (isClassDeclaration(node) || isInterfaceDeclaration(node)) {
 			const symbol = node.name ? typeChecker.getSymbolAtLocation(node.name) : null;
 
 			if (symbol) {
