@@ -1,7 +1,5 @@
 import { type SchemaObject } from 'openapi3-ts/oas30';
 import {
-	type TypeChecker,
-	type Node as TypescriptNode,
 	createProgram,
 	forEachChild,
 	isClassDeclaration,
@@ -13,6 +11,8 @@ import {
 	isUnionTypeNode,
 	isVariableDeclaration,
 	isVariableStatement,
+	type Node as TypescriptNode,
+	type TypeChecker,
 } from 'typescript';
 
 type OpenAPIDataType = 'string' | 'number' | 'boolean' | 'object' | 'array';
@@ -193,6 +193,7 @@ export class TypescriptToOpenApiSpec {
 
 			if (Array.isArray(val)) {
 				const arrayVal: unknown[] = val;
+
 				const calcType = arrayVal.every((val) => typeof val === 'boolean')
 					? 'boolean'
 					: arrayVal.every((val) => typeof val === 'number')
@@ -290,6 +291,22 @@ export class TypescriptToOpenApiSpec {
 			if (symbol) {
 				const name = symbol.getName();
 				definition[name] = definition[name] ?? {};
+
+				// Handle inheritance
+				if (node.heritageClauses) {
+					for (const heritage of node.heritageClauses) {
+						for (const type of heritage.types) {
+							const baseTypeName = type.expression.getText();
+							if (definition[baseTypeName]) {
+								// Merge base interface properties
+								definition[name] = {
+									...definition[baseTypeName],
+									...definition[name],
+								};
+							}
+						}
+					}
+				}
 
 				for (const member of node.members) {
 					if ((isPropertySignature(member) || isPropertyDeclaration(member)) && member.type) {
